@@ -1,0 +1,22 @@
+{
+  "name": "rukuma",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "sst": "ion"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.7.3",
+    "@tsconfig/node20": "^20.1.4",
+    "@types/node": "^20.12.11",
+    "typescript": "^5.4.5"
+  }
+}

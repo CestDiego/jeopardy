@@ -1,0 +1,36 @@
+{
+  "name": "@rukuma/core",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -noEmit"
+  },
+  "imports": {
+    "#*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*.js",
+      "./src/*.jsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx",
+      "./src/*/index.js",
+      "./src/*/index.jsx"
+    ]
+  },
+  "exports": {
+    "./": "./src/"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.11",
+    "vitest": "^1.6.0"
+  },
+  "dependencies": {
+    "@langchain/community": "^0.0.56",
+    "@langchain/core": "^0.1.62",
+    "pino": "^9.1.0",
+    "ts-custom-error": "^3.3.1",
+    "ulid": "^2.3.0",
+    "valibot": "^0.30.0"
+  }
+}
