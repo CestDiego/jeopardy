@@ -8,6 +8,7 @@ installGlobals();
 
 export default defineConfig({
   plugins: [
+    tsconfigPaths(),
     remix({
       future: {
         v3_fetcherPersist: true,
@@ -15,11 +16,11 @@ export default defineConfig({
         v3_throwAbortReason: true,
       },
     }),
-    tsconfigPaths(),
   ],
-  // resolve: {
-  //   alias: {
-  //     "@/": path.resolve(__dirname, "./app/"),
-  //   },
-  // },
+  resolve: {
+    alias: {
+      "@/components": path.resolve(__dirname, "./app/components"),
+      "@/lib": path.resolve(__dirname, "./app/lib"),
+    },
+  },
 });

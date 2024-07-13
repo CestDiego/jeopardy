@@ -24,7 +24,7 @@ export default function Index() {
             5m Quick Start
           </a>
 
-          <Button variant="secondary" className="overflow-hidden">
+          <Button variant="destructive" className="overflow-hidden">
             Hello
           </Button>
         </li>
