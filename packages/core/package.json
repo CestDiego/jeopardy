@@ -22,15 +22,15 @@
     "./": "./src/"
   },
   "devDependencies": {
-    "@types/node": "^20.12.11",
-    "vitest": "^1.6.0"
+    "@types/node": "^20.14.10",
+    "vitest": "^2.0.2"
   },
   "dependencies": {
-    "@langchain/community": "^0.0.56",
-    "@langchain/core": "^0.1.62",
-    "pino": "^9.1.0",
+    "@langchain/community": "^0.2.18",
+    "@langchain/core": "^0.2.15",
+    "pino": "^9.2.0",
     "ts-custom-error": "^3.3.1",
     "ulid": "^2.3.0",
-    "valibot": "^0.30.0"
+    "valibot": "^0.36.0"
   }
 }

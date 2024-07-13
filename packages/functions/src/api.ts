@@ -1,6 +1,7 @@
 import { ApiError } from "@rukuma/core/errors.js";
 import { logger } from "@rukuma/core/logger.js";
 import { Hono } from "hono";
+import { handle } from "hono/aws-lambda";
 import { logger as honoLogger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
 import { Resource } from "sst";
@@ -14,7 +15,7 @@ app.onError((error, c) => {
   logger.error(error, "An error occurred");
 
   if (error instanceof ValiError) {
-    return c.json({ error: flatten(error).nested }, { status: 400 });
+    return c.json({ error: flatten(error.issues).nested }, { status: 400 });
   }
 
   if (error instanceof ApiError) {
@@ -38,4 +39,4 @@ app.put("/*", async (c) => {
   return new Response(`Object created with key: ${key}`);
 });
 
-export default app;
+export const handler = handle(app);

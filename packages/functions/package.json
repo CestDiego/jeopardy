@@ -6,12 +6,12 @@
     "typecheck": "tsc -noEmit"
   },
   "devDependencies": {
-    "@types/node": "^20.12.11"
+    "@types/node": "^20.14.10"
   },
   "dependencies": {
-    "@hono/valibot-validator": "^0.2.5",
+    "@hono/valibot-validator": "^0.3.0",
     "@rukuma/core": "workspace:*",
-    "hono": "^4.3.6",
-    "valibot": "^0.30.0"
+    "hono": "^4.4.13",
+    "valibot": "^0.36.0"
   }
 }
