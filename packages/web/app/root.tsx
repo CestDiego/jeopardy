@@ -1,5 +1,14 @@
+import { Header } from "@/components/header";
 import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from "@remix-run/node";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  isRouteErrorResponse,
+  useRouteError,
+} from "@remix-run/react";
 import "./globals.css";
 import { ThemeSwitcherSafeHTML, ThemeSwitcherScript } from "@/components/theme-switcher";
 
@@ -13,6 +22,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Header />
         {children}
         <ScrollRestoration />
         <Scripts />
