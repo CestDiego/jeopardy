@@ -38,8 +38,14 @@ export default $config({
       url: true,
     });
 
+    const web = new sst.aws.Remix("Web", {
+      path: "packages/web",
+      link: [bucket, api],
+    });
+
     return {
       api: api.url,
+      web: web.url,
     };
   },
 });
