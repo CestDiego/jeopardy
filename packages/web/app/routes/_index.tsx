@@ -23,7 +23,10 @@ export default function Index() {
           >
             5m Quick Start
           </a>
-          <Button className="mt-4 w-full bg-green-600 font-normal">Hello</Button>
+
+          <Button variant="secondary" className="overflow-hidden">
+            Hello
+          </Button>
         </li>
         <li>
           <a
