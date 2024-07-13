@@ -3,6 +3,11 @@
 import "sst"
 declare module "sst" {
   export interface Resource {
+    AiEndpoint: {
+      name: string
+      type: "sst.aws.Function"
+      url: string
+    }
     Api: {
       name: string
       type: "sst.aws.Function"

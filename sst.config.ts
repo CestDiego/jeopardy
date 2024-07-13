@@ -28,6 +28,12 @@ export default $config({
 
     const api = new sst.aws.Function("Api", {
       link: [bucket],
+      handler: "packages/functions/src/graphql/graphql.handler",
+      url: true,
+    });
+
+    const ai = new sst.aws.Function("AiEndpoint", {
+      link: [bucket],
       permissions: [bedrockPermission],
       environment: {
         LANGCHAIN_TRACING_V2: "true",
@@ -45,6 +51,7 @@ export default $config({
 
     return {
       api: api.url,
+      ai: ai.url,
       web: web.url,
     };
   },

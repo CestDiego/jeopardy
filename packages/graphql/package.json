@@ -1,0 +1,16 @@
+{
+  "name": "@rukuma/graphql",
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "graphql": "^16.8.1",
+    "react": "^18.2.0",
+    "urql": "^4.0.6",
+    "wonka": "^6.3.4"
+  },
+  "devDependencies": {
+    "@genql/cli": "^6.3.2",
+    "@types/react": "^18.2.61",
+    "type-fest": "^4.10.3"
+  }
+}
