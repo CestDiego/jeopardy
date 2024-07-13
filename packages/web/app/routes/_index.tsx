@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import type { MetaFunction } from "@remix-run/node";
 
 export const meta: MetaFunction = () => {
@@ -22,7 +23,7 @@ export default function Index() {
           >
             5m Quick Start
           </a>
-          <Button>Hello</Button>
+          <Button className="mt-4 w-full bg-green-600 font-normal">Hello</Button>
         </li>
         <li>
           <a
