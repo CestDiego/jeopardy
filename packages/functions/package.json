@@ -5,6 +5,22 @@
   "scripts": {
     "typecheck": "tsc -noEmit"
   },
+  "imports": {
+    "#*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*.js",
+      "./src/*.jsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx",
+      "./src/*/index.js",
+      "./src/*/index.jsx"
+    ]
+  },
+  "exports": {
+    "./": "./src/"
+  },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.141",
     "@types/node": "^20.14.10"
