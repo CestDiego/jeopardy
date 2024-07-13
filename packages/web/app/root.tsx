@@ -22,7 +22,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Header />
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -42,6 +41,7 @@ function App({ children }: { children: React.ReactNode }) {
         <ThemeSwitcherScript />
       </head>
       <body>
+        <Header />
         {children}
         <ScrollRestoration />
         <Scripts />
