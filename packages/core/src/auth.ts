@@ -1,15 +1,19 @@
-import { OAuthRequestError } from "@lucia-auth/oauth";
+import { OAuth2RequestError, generateCodeVerifier, generateState } from "arctic";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { handle } from "hono/aws-lambda";
 import { getCookie, setCookie } from "hono/cookie";
 import { HTTPException } from "hono/http-exception";
+import { logger } from "hono/logger";
 import { generateId } from "lucia";
-import { lucia as auth, github_auth } from "#clients/lucia";
+import { serializeCookie } from "oslo/cookie";
+import { lucia as auth, google_auth } from "#clients/lucia";
 import { db } from "#db";
 import { userTable } from "#schema";
 
 const app = new Hono();
+
+app.use(logger());
 
 // Middleware to parse JSON body
 app.use("*", async (c, next) => {
@@ -19,113 +23,78 @@ app.use("*", async (c, next) => {
   await next();
 });
 
-// Local login endpoint
-app.post("/login", async (c) => {
-  const { username, password } = c.get("jsonBody");
-
-  if (typeof username !== "string" || typeof password !== "string") {
-    throw new HTTPException(400, { message: "Invalid input" });
-  }
-
-  try {
-    const key = await auth.useKey("username", username, password);
-    const session = await auth.createSession({
-      userId: key.userId,
-      attributes: {},
-    });
-    const authRequest = auth.handleRequest(c);
-    authRequest.setSession(session);
-
-    return c.json({ message: "Logged in successfully" }, 200);
-  } catch (e) {
-    throw new HTTPException(400, { message: "Invalid username or password" });
-  }
-});
-
-// Local signup endpoint
-app.post("/signup", async (c) => {
-  const { username, password } = c.get("jsonBody");
-
-  if (typeof username !== "string" || typeof password !== "string") {
-    throw new HTTPException(400, { message: "Invalid input" });
-  }
-
-  try {
-    const userId = generateId(15);
-    await auth.createUser({
-      userId,
-      key: {
-        providerId: "username",
-        providerUserId: username,
-        password,
-      },
-      attributes: {
-        username,
-      },
-    });
-    const session = await auth.createSession({
-      userId,
-      attributes: {},
-    });
-    const authRequest = auth.handleRequest(c);
-    authRequest.setSession(session);
-
-    return c.json({ message: "User created successfully" }, 201);
-  } catch (e) {
-    throw new HTTPException(400, { message: "Username already taken" });
-  }
-});
-
 // GitHub OAuth initiation endpoint
-app.get("/auth/github", async (c) => {
-  const [url, state] = await github_auth.getAuthorizationUrl();
-  setCookie(c, "github_oauth_state", state, {
+app.get("/auth/google", async (c) => {
+  const state = generateState();
+  const codeVerifier = generateCodeVerifier();
+  const url = await google_auth.createAuthorizationURL(state, coveVerifier, {
+    scopes: ["openid", "profile", "email"],
+  });
+  setCookie(c, "google_oauth_state", state, {
     path: "/",
     httpOnly: true,
-    maxAge: 60 * 60 * 1000,
+    maxAge: 60 * 10,
     secure: process.env.NODE_ENV === "production",
+  });
+
+  // store code verifier as cookie
+  setCookie(c, "google_code_verifier", codeVerifier, {
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    httpOnly: true,
+    maxAge: 60 * 10, // 10 min
   });
 
   return c.redirect(url.toString());
 });
 
-// GitHub OAuth callback endpoint
-app.get("/auth/github/callback", async (c) => {
-  const storedState = getCookie(c, "github_oauth_state");
+// Google OAuth callback endpoint
+app.get("/auth/google/callback", async (c) => {
   const state = c.req.query("state");
   const code = c.req.query("code");
 
-  if (!storedState || !state || storedState !== state || typeof code !== "string") {
+  const storedState = getCookie(c, "google_oauth_state");
+  const storedCodeVerifier = getCookie(c, "google_code_verifier");
+
+  if (
+    !storedState ||
+    !storedCodeVerifier ||
+    !state ||
+    storedState !== state ||
+    typeof code !== "string"
+  ) {
     return c.json({ error: "Invalid state" }, 400);
   }
 
   try {
-    const { getExistingUser, githubUser, createUser } =
-      await github_auth.validateCallback(code);
+    const tokens = await google_auth.validateAuthorizationCode(code, storedCodeVerifier);
+    console.log({ tokens });
 
-    const getUser = async () => {
-      const existingUser = await getExistingUser();
-      if (existingUser) return existingUser;
-      const user = await createUser({
-        attributes: {
-          name: githubUser.login,
-        },
-      });
-      return user;
-    };
+    // const getUser = async () => {
+    //   const existingUser = await getExistingUser();
+    //   if (existingUser) return existingUser;
+    //   const user = await createUser({
+    //     attributes: {
+    //       name: githubUser.login,
+    //     },
+    //   });
+    //   return user;
+    // };
 
-    const user = await getUser();
-    const session = await auth.createSession({
-      userId: user.userId,
-      attributes: {},
-    });
-    const authRequest = auth.handleRequest(c);
-    authRequest.setSession(session);
+    // const user = await getUser();
+    // const session = await auth.createSession({
+    //   userId: user.userId,
+    //   attributes: {},
+    // });
+    // const authRequest = auth.handleRequest(c);
+    // authRequest.setSession(session);
 
     return c.redirect("/");
   } catch (e) {
-    if (e instanceof OAuthRequestError) {
-      return c.json({ error: "Invalid code" }, 400);
+    if (e instanceof OAuth2RequestError) {
+      const { request, message, description } = e;
+      logger("OAuth2RequestError", request, message, description);
+      return c.json(e, 400);
     }
     return c.json({ error: "Server error" }, 500);
   }

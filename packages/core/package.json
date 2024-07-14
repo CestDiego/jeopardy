@@ -45,6 +45,7 @@
     "@langchain/core": "^0.2.15",
     "@lucia-auth/adapter-drizzle": "^1.0.7",
     "@neondatabase/serverless": "^0.9.4",
+    "arctic": "^1.9.1",
     "drizzle-orm": "^0.32.0",
     "drizzle-valibot": "^0.2.0",
     "hono": "^4.4.13",

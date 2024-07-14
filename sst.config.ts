@@ -44,6 +44,11 @@ export default $config({
       url: true,
     });
 
+    const auth = new sst.aws.Function("Auth", {
+      handler: "packages/functions/src/auth.handler",
+      url: true,
+    });
+
     const web = new sst.aws.Remix("Web", {
       path: "packages/web",
       link: [bucket, api],

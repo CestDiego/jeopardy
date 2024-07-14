@@ -1,5 +1,5 @@
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
-import { github } from "@lucia-auth/oauth/providers";
+import { GitHub, Google } from "arctic";
 import { Lucia } from "lucia";
 import { db } from "#db";
 import { sessionTable, userTable } from "#schema";
@@ -13,16 +13,27 @@ export const lucia = new Lucia(adapter, {
       secure: process.env.NODE_ENV === "production",
     },
   },
-});
-
-export const github_auth = github(auth, {
-  clientId: process.env.GITHUB_CLIENT_ID as string,
-  clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+  getUserAttributes: (attributes) => {
+    return {
+      googleId: attributes.google_id,
+      username: attributes.username,
+    };
+  },
 });
 
 // IMPORTANT!
 declare module "lucia" {
   interface Register {
     Lucia: typeof lucia;
+    DatabaseUserAttributes: {
+      google_id: number;
+      username: string;
+    };
   }
 }
+
+export const google_auth = new Google(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  "/login/google/callback",
+);
