@@ -1,0 +1,12 @@
+type Data {
+  red: String
+  response: String
+}
+
+type Mutation {
+  submitStuff: Data
+}
+
+type Query {
+  clients: Data
+}
