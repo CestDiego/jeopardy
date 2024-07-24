@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@rukuma/core':
+        specifier: workspace:*
+        version: link:packages/core
       sst:
         specifier: ion
         version: 3.0.37(hono@4.4.13)
@@ -195,9 +198,6 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.4)
-      urql:
-        specifier: ^4.0.6
-        version: 4.1.0(@urql/core@5.0.4(graphql@16.9.0))(react@18.3.1)
     devDependencies:
       '@remix-run/dev':
         specifier: ^2.10.2

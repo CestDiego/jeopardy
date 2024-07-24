@@ -24,10 +24,10 @@ app.use("*", async (c, next) => {
 });
 
 // GitHub OAuth initiation endpoint
-app.get("/auth/google", async (c) => {
+app.get("/login/google", async (c) => {
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
-  const url = await google_auth.createAuthorizationURL(state, coveVerifier, {
+  const url = await google_auth.createAuthorizationURL(state, codeVerifier, {
     scopes: ["openid", "profile", "email"],
   });
   setCookie(c, "google_oauth_state", state, {
@@ -49,7 +49,7 @@ app.get("/auth/google", async (c) => {
 });
 
 // Google OAuth callback endpoint
-app.get("/auth/google/callback", async (c) => {
+app.get("/login/google/callback", async (c) => {
   const state = c.req.query("state");
   const code = c.req.query("code");
 

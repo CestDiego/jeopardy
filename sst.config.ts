@@ -1,4 +1,7 @@
-/// <reference path="./.sst/platform/config.d.ts" />
+// <reference path="./.sst/platform/config.d.ts" />
+
+import { useEnv } from "@rukuma/core/validator";
+
 export default $config({
   app(input) {
     return {
@@ -14,6 +17,12 @@ export default $config({
     };
   },
   async run() {
+    const Environment = useEnv({
+      extraEnv: {
+        SST_STAGE: $app.stage,
+      },
+    });
+
     $transform(sst.aws.Function, (args) => {
       args.runtime = "nodejs20.x";
       args.architecture = "arm64";
@@ -45,8 +54,9 @@ export default $config({
     });
 
     const auth = new sst.aws.Function("Auth", {
-      handler: "packages/functions/src/auth.handler",
+      handler: "packages/core/src/auth.handler",
       url: true,
+      environment: Environment,
     });
 
     const web = new sst.aws.Remix("Web", {
@@ -57,6 +67,7 @@ export default $config({
     return {
       api: api.url,
       ai: ai.url,
+      auth: auth.url,
       web: web.url,
     };
   },

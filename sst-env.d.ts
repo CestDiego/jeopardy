@@ -13,6 +13,11 @@ declare module "sst" {
       type: "sst.aws.Function"
       url: string
     }
+    Auth: {
+      name: string
+      type: "sst.aws.Function"
+      url: string
+    }
     Bucket: {
       name: string
       type: "sst.aws.Bucket"

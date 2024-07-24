@@ -1,7 +1,9 @@
 {
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "Bundler",
     "lib": ["es2023"],
-
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true

@@ -1,8 +1,3 @@
-import { LaptopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
-import { Link } from "@remix-run/react";
-import * as React from "react";
-import { useHydrated } from "remix-utils/use-hydrated";
-
 import { getTheme, setTheme as setSystemTheme } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +8,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { LaptopIcon, MoonIcon, SunIcon } from "@radix-ui/react-icons";
+import { Link } from "@remix-run/react";
+import * as React from "react";
+import { useHydrated } from "remix-utils/use-hydrated";
 
 export function Header() {
   const hydrated = useHydrated();
@@ -31,6 +30,13 @@ export function Header() {
           <span className="text-lg font-bold">Rukuma</span>
         </Link>
       </div>
+      <div className="flex items-center space-x-4">
+        <Link className="flex items-center space-x-2" to="/">
+          {/* <HomeIcon className="h-6 w-6" /> */}
+          <a href="/login/google">Login with Google</a>
+        </Link>
+      </div>
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button className="w-10 h-10 rounded-full border" size="icon" variant="ghost">
