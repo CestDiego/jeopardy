@@ -24,13 +24,6 @@ declare module "sst" {
       "name": string
       "type": "sst.aws.Bucket"
     }
-    "CloudflareApi": {
-      "type": "sst.cloudflare.Worker"
-      "url": string
-    }
-    "RukumaBucket": {
-      "type": "sst.cloudflare.Bucket"
-    }
     "Web": {
       "type": "sst.aws.Remix"
       "url": string
