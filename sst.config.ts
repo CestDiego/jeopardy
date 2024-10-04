@@ -1,74 +1,83 @@
 // <reference path="./.sst/platform/config.d.ts" />
 
-import { useEnv } from "@rukuma/core/validator";
+import { useEnv } from '@rukuma/core/validator'
 
 export default $config({
   app(input) {
     return {
-      name: "rukuma",
-      removal: input?.stage === "production" ? "retain" : "remove",
-      home: "aws",
+      name: 'rukuma',
+      removal: input?.stage === 'production' ? 'retain' : 'remove',
+      home: 'aws',
       providers: {
         aws: {
-          region: "us-east-1",
-          profile: "onde-vamos-dev",
+          region: 'us-east-1',
+          profile: 'onde-vamos-dev',
         },
       },
-    };
+    }
   },
   async run() {
     const Environment = useEnv({
       extraEnv: {
         SST_STAGE: $app.stage,
       },
-    });
+    })
 
     $transform(sst.aws.Function, (args) => {
-      args.runtime = "nodejs20.x";
-      args.architecture = "arm64";
-    });
+      args.runtime = 'nodejs20.x'
+      args.architecture = 'arm64'
+    })
 
-    const bucket = new sst.aws.Bucket("Bucket");
+    new sst.x.DevCommand('GraphQL', {
+      dev: {
+        command: 'pnpm run generate:watch',
+        directory: 'packages/graphql',
+        autostart: true,
+      },
+    })
+
+    const bucket = new sst.aws.Bucket('Bucket')
 
     const bedrockPermission = {
-      actions: ["bedrock:InvokeModel"],
-      resources: ["*"],
-    };
+      actions: ['bedrock:InvokeModel'],
+      resources: ['*'],
+    }
 
-    const api = new sst.aws.Function("Api", {
+    const api = new sst.aws.Function('Api', {
       link: [bucket],
-      handler: "packages/functions/src/graphql/graphql.handler",
+      handler: 'packages/functions/src/graphql/graphql.handler',
       url: true,
-    });
+    })
 
-    const ai = new sst.aws.Function("AiEndpoint", {
+    const ai = new sst.aws.Function('AiEndpoint', {
       link: [bucket],
       permissions: [bedrockPermission],
       environment: {
-        LANGCHAIN_TRACING_V2: "true",
+        LANGCHAIN_TRACING_V2: 'true',
         LANGCHAIN_PROJECT: `${$app.name}-${$app.stage}`,
       },
-      handler: "packages/functions/src/api.handler",
-      timeout: "3 minutes",
+      handler: 'packages/functions/src/api.handler',
+      timeout: '3 minutes',
       url: true,
-    });
+    })
 
-    const auth = new sst.aws.Function("Auth", {
-      handler: "packages/core/src/auth.handler",
+    const auth = new sst.aws.Function('Auth', {
+      handler: 'packages/functions/src/auth.handler',
       url: true,
       environment: Environment,
-    });
+    })
 
-    const web = new sst.aws.Remix("Web", {
-      path: "packages/web",
-      link: [bucket, api],
-    });
+    const web = new sst.aws.Remix('Web', {
+      path: 'packages/web',
+      link: [bucket, api, auth],
+    })
 
     return {
       api: api.url,
+      auth: auth.url,
       ai: ai.url,
       auth: auth.url,
       web: web.url,
-    };
+    }
   },
-});
+})
