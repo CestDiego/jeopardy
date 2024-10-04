@@ -1,3 +1,4 @@
+import { lucia as auth, google_auth } from "@rukuma/core/clients/lucia";
 import { OAuth2RequestError, generateCodeVerifier, generateState } from "arctic";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
@@ -7,7 +8,6 @@ import { HTTPException } from "hono/http-exception";
 import { logger } from "hono/logger";
 import { generateId } from "lucia";
 import { serializeCookie } from "oslo/cookie";
-import { lucia as auth, google_auth } from "#clients/lucia";
 import { db } from "#db";
 import { userTable } from "#schema";
 

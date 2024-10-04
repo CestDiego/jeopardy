@@ -39,8 +39,8 @@
         "vitest": "^2.1.2"
     },
     "dependencies": {
-        "@aws-sdk/client-s3": "^3.664.0",
-        "@aws-sdk/s3-request-presigner": "^3.664.0",
+        "@aws-sdk/client-s3": "^3.665.0",
+        "@aws-sdk/s3-request-presigner": "^3.665.0",
         "@langchain/community": "^0.3.4",
         "@langchain/core": "^0.3.7",
         "@neondatabase/serverless": "^0.9.5",

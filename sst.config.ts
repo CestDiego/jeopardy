@@ -1,4 +1,4 @@
-// <reference path="./.sst/platform/config.d.ts" />
+/// <reference path="./.sst/platform/config.d.ts" />
 
 export default $config({
   app(input) {
@@ -65,7 +65,6 @@ export default $config({
 
     return {
       api: api.url,
-      auth: auth.url,
       ai: ai.url,
       auth: auth.url,
       web: web.url,

@@ -14,7 +14,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "sst": "3.1.61"
+        "sst": "3.1.64"
     },
     "devDependencies": {
         "@biomejs/biome": "1.9.3",
