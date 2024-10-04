@@ -1,5 +1,10 @@
 /// <reference path="./.sst/platform/config.d.ts" />
 
+import * as fs from "fs";
+import * as aws from "@pulumi/aws";
+import * as pulumi from "@pulumi/pulumi";
+import { getOriginShieldRegion } from "./packages/shared/src/origin-shield";
+
 export default $config({
   app(input) {
     return {
@@ -28,7 +33,95 @@ export default $config({
       },
     })
 
-    const bucket = new sst.aws.Bucket('Bucket')
+    const bucket = new sst.aws.Bucket('Uploads', {
+        access: 'cloudfront',
+    })
+
+    const transformedImageBucket = new sst.aws.Bucket("TransformedImages", {
+      access: 'cloudfront',
+    });
+
+
+    // Define imageResizer Lambda function
+    const imageResizer = new sst.aws.Function(`ImageResizer`, {
+      handler: 'packages/functions/src/image-processing/index.handler',
+      url: true,
+    });
+
+    //  // CloudFront Function for URL rewrites
+    const urlRewriteFunction = new aws.cloudfront.Function(`CDNUrlRewrite`, {
+      runtime: "cloudfront-js-2.0",
+      code: pulumi.interpolate`${fs.readFileSync("packages/functions/src/url-rewrite/index.js", "utf8")}`,
+    });
+
+    const cdn = new sst.aws.Cdn('ContentDeliveryNetwork', {
+      domain: {
+        name: 'cdn.rukuma.marcawasi.com',
+      },
+      origins: [
+        {
+          originId: 'S3Origin',
+          domainName: transformedImageBucket.domain,
+          s3OriginConfig: {
+            originAccessIdentity: new aws.cloudfront.OriginAccessIdentity(
+              `${$app.name}-${$app.stage}-origin-access-identity`,
+              {
+                comment: `${$app.name}-${$app.stage}-origin-access-identity`.slice(0, 64),
+              }
+            ).cloudfrontAccessIdentityPath,
+          },
+        },
+        {
+          originId: 'LambdaOrigin',
+          domainName: imageResizer.url.apply((url) => new URL(url).hostname),
+          customOriginConfig: {
+            httpPort: 80,
+            httpsPort: 443,
+            originProtocolPolicy: 'https-only',
+            originSslProtocols: ['TLSv1.2'],
+          },
+        },
+      ],
+      originGroups: [
+        {
+          originId: 'mainOriginGroup',
+          failoverCriteria: {
+            statusCodes: [500, 502, 503, 504],
+          },
+          members: [{ originId: 'S3Origin' }, { originId: 'LambdaOrigin' }],
+        },
+      ],
+      defaultCacheBehavior: {
+        targetOriginId: 'mainOriginGroup',
+        viewerProtocolPolicy: 'redirect-to-https',
+        allowedMethods: ['GET', 'HEAD', 'OPTIONS'],
+        cachedMethods: ['GET', 'HEAD'],
+        forwardedValues: {
+          queryString: true,
+          cookies: { forward: 'none' },
+        },
+        minTtl: 0,
+        defaultTtl: 86400,
+        maxTtl: 31536000,
+        compress: true,
+        functionAssociations: [
+          {
+            eventType: 'viewer-request',
+            functionArn: urlRewriteFunction.arn,
+          },
+        ],
+      },
+      transform: {
+        distribution: {
+          priceClass: 'PriceClass_All',
+          restrictions: {
+            geoRestriction: {
+              restrictionType: 'none',
+            },
+          },
+        },
+      },
+    })
 
     const bedrockPermission = {
       actions: ['bedrock:InvokeModel'],
@@ -65,9 +158,11 @@ export default $config({
 
     return {
       api: api.url,
+      auth: auth.url,
       ai: ai.url,
       auth: auth.url,
       web: web.url,
+      cdn: cdn.domainUrl || cdn.url,
     }
   },
 })

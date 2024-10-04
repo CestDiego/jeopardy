@@ -14,10 +14,11 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@pulumi/aws": "^6.54.2",
+        "@pulumi/pulumi": "^3.135.1",
         "sst": "3.1.64"
     },
     "devDependencies": {
-        "@biomejs/biome": "1.9.3",
         "@tsconfig/node20": "^20.1.4",
         "@types/node": "^22.7.4",
         "chalk": "^5.3.0",

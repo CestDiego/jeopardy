@@ -78,25 +78,7 @@
           "fix": "safe"
         },
         "noDebugger": "off",
-        "noExplicitAny": "off",
-        "noConsole": {
-          "level": "warn",
-          "fix": "none",
-          "options": {
-            "allow": [
-              "assert",
-              "error",
-              "info",
-              "warn",
-              "debug",
-              "time",
-              "timeEnd",
-              "timeLog"
-            ]
-          }
-        },
-        "noDuplicateAtImportRules": "error",
-        "noEmptyBlock": "warn"
+        "noExplicitAny": "off"
       }
     }
   },

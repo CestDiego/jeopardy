@@ -20,7 +20,16 @@ declare module "sst" {
       "type": "sst.aws.Function"
       "url": string
     }
-    "Bucket": {
+    "ImageResizer": {
+      "name": string
+      "type": "sst.aws.Function"
+      "url": string
+    }
+    "TransformedImages": {
+      "name": string
+      "type": "sst.aws.Bucket"
+    }
+    "Uploads": {
       "name": string
       "type": "sst.aws.Bucket"
     }
