@@ -1,142 +1,31 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
-  "organizeImports": {
-    "enabled": true
-  },
   "vcs": {
-    "enabled": true,
+    "enabled": false,
     "clientKind": "git",
-    "useIgnoreFile": true,
-    "defaultBranch": "main"
+    "useIgnoreFile": false
   },
-  "linter": {
-    "enabled": true,
-    "ignore": [
-      "vite-env.d.ts"
-    ],
-    "rules": {
-      "recommended": true,
-      "a11y": {
-        "noSvgWithoutTitle": "off",
-        "useKeyWithClickEvents": "off"
-      },
-      "complexity": {
-        "noBannedTypes": "off",
-        "noUselessFragments": "warn"
-      },
-      "correctness": {
-        "noUnusedImports": "error",
-        "noUnusedVariables": "error",
-        "useJsxKeyInIterable": "error"
-      },
-      "nursery": {
-        "useSortedClasses": {
-          "level": "warn",
-          "fix": "safe",
-          "options": {
-            "attributes": [
-              "classList"
-            ],
-            "functions": [
-              "cn",
-              "clx",
-              "clsx",
-              "cva",
-              "tw"
-            ]
-          }
-        }
-      },
-      "performance": {
-        "noReExportAll": "off"
-      },
-      "security": {
-        "noDangerouslySetInnerHtmlWithChildren": "warn"
-      },
-      "style": {
-        "noUnusedTemplateLiteral": "off",
-        "useConsistentArrayType": "warn",
-        "useExportType": "warn",
-        "useImportType": "warn",
-        "useFilenamingConvention": {
-          "level": "off",
-          "options": {
-            "filenameCases": [
-              "PascalCase",
-              "camelCase",
-              "kebab-case"
-            ]
-          }
-        }
-      },
-      "suspicious": {
-        "noArrayIndexKey": "error",
-        "noAssignInExpressions": "off",
-        "noCommentText": "off",
-        "noConsoleLog": {
-          "level": "info",
-          "fix": "safe"
-        },
-        "noDebugger": "off",
-        "noExplicitAny": "off"
-      }
-    }
+  "files": {
+    "ignoreUnknown": false,
+    "ignore": []
   },
   "formatter": {
     "enabled": true,
-    "formatWithErrors": false,
     "indentStyle": "space",
-    "indentWidth": 4,
-    "lineWidth": 100,
-    "ignore": [
-      "tsconfig.json"
-    ]
+    "indentWidth": 2
   },
-  "css": {
-    "parser": {
-      "allowWrongLineComments": false
-    },
-    "formatter": {
-      "enabled": true,
-      "quoteStyle": "double"
+  "organizeImports": {
+    "enabled": true
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true
     }
   },
   "javascript": {
     "formatter": {
-      "indentWidth": 2,
-      "quoteStyle": "single",
-      "jsxQuoteStyle": "double",
-      "arrowParentheses": "always",
-      "semicolons": "asNeeded",
-      "trailingCommas": "es5",
-      "quoteProperties": "asNeeded",
-      "bracketSpacing": true,
-      "bracketSameLine": false
+      "quoteStyle": "single"
     }
-  },
-  "json": {
-    "formatter": {
-      "indentWidth": 4,
-      "trailingCommas": "none"
-    }
-  },
-  "files": {
-    "ignoreUnknown": true,
-    "include": [
-      "**/*.js",
-      "**/*.mjs",
-      "**/*.ts",
-      "**/*.tsx",
-      "**/*.css",
-      "**/*.json"
-    ],
-    "ignore": [
-      ".github",
-      ".husky",
-      ".vscode",
-      "build",
-      "dist",
-      "public"
-    ]
   }
 }
