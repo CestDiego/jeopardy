@@ -1,12 +1,9 @@
-import { isPRStage } from "@onde-vamos/shared/utils";
 import { NeonClient } from "./client";
-import type { Branch } from "./types";
+import { Resource } from "sst";
 
-const NEON_API_KEY = process.env.NEON_API_KEY;
-if (!NEON_API_KEY) throw new Error("NEON_API_KEY is not defined");
-
-const STAGE = process.env.STAGE || process.env.SST_STAGE;
-if (!STAGE) throw new Error("Both SST_STAGE and STAGE are undefined.");
+const NEON_API_KEY = Resource.NEON_API_KEY.value;
+const DATABASE_CONNECTION_URL = Resource.DATABASE_CONNECTION_URL.value;
+const STAGE = Resource.App.stage;
 
 const ROLE_NAME = "OndeVamos_owner";
 const DB_NAME = "OndeVamos";
@@ -23,10 +20,10 @@ export const getSourceBranchForStage = (stage: string) => {
   return "dev";
 };
 
-export const getBranchForStage = (stage: string) => {
+export const getBranchNameForStage = (stage: string) => {
   if (stage === "prod") return "main";
-  if (stage === "staging") return "staging";
-  if (isPRStage(stage)) {
+  if (stage === "dev") return "dev";
+  if (stage.startsWith("pr")) {
     return `ephemeral/${stage}`;
   }
   return `dev/${stage}`;
@@ -106,7 +103,7 @@ export const getOrCreateBranch = async (
   const { id: projectId } = await getProject();
 
   const sourceBranchName = getSourceBranchForStage(STAGE);
-  const targetBranchName = getBranchForStage(STAGE);
+  const targetBranchName = getBranchNameForStage(STAGE);
 
   console.log(`Source Branch for stage ${STAGE}: ${sourceBranchName}`);
   try {
@@ -167,10 +164,42 @@ export const getOrCreateBranch = async (
   }
 };
 
+export const getConnectionURIForBranch = async (branchName: string) => {
+  const { id: projectId } = await getProject();
+  const { branches } = await client.listBranches(projectId);
+  const branch = branches.find((branch) => branch.name === branchName);
+  if (!branch) {
+    throw new Error(`Branch ${branchName} not found`);
+  }
+  const { uri } = await client.getConnectionUri(projectId, {
+    branchId: branch.id,
+    pooled: true,
+    databaseName: DB_NAME,
+    roleName: ROLE_NAME,
+  });
+
+  logger.info(`Using branch ${branchName}`);
+  return uri;
+};
+
+export const getDatabaseString = async () => {
+  // If we are in a PR stage, or in local we should use a branch, otherwise, the environment branch works fine
+  if (STAGE === "production" || STAGE === "staging" || STAGE === "dev") {
+    return DATABASE_CONNECTION_URL;
+  }
+  const branch = await getOrCreateBranch();
+  if (!branch) {
+    throw new Error("Branch not found");
+  }
+  const connectionString = branch.uri;
+  console.log(`Using branch: ${branch.name}`);
+  return connectionString;
+};
+
 export const deleteBranchByName = async () => {
   const { id: projectId } = await getProject();
 
-  const branchName = getBranchForStage(STAGE);
+  const branchName = getBranchNameForStage(STAGE);
   const { branches } = await client.listBranches(projectId);
   const filteredBranches = branches.filter(
     (branch) => branch.name === branchName,

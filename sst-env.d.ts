@@ -20,10 +20,18 @@ declare module "sst" {
       "type": "sst.aws.Function"
       "url": string
     }
+    "DATABASE_CONNECTION_URL": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "ImageResizer": {
       "name": string
       "type": "sst.aws.Function"
       "url": string
+    }
+    "NEON_API_KEY": {
+      "type": "sst.sst.Secret"
+      "value": string
     }
     "TransformedImages": {
       "name": string
