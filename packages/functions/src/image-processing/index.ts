@@ -168,7 +168,6 @@ async function downloadOriginalImage(originalImagePath: string) {
 async function processImage(
   originalImageBody: Uint8Array,
   operations: ImageOperations,
-  contentType: string,
 ) {
   let transformedImage = Sharp(originalImageBody, {
     failOn: "none",
@@ -186,7 +185,6 @@ async function processImage(
   }
 
   if (operations.format) {
-    contentType = `image/${operations.format}`;
     const formatOptions = operations.quality
       ? { quality: operations.quality }
       : {};

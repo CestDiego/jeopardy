@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import React from "react";
 
 const benefits = [
   {
@@ -90,6 +89,7 @@ const RukumaLandingPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {benefits.map((benefit, index) => (
               <Card
+                // biome-ignore lint:
                 key={index}
                 className="bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-2"
               >
