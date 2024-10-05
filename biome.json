@@ -11,7 +11,8 @@
       ".sst",
       "sst-env.d.ts",
       "packages/graphql/genql",
-      "packages/core/migrations"
+      "packages/core/migrations",
+      "packages/graphql/schema.graphql"
     ]
   },
   "formatter": {
