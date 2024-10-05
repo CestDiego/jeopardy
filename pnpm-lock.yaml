@@ -47,7 +47,7 @@ importers:
         version: 3.665.0
       '@langchain/community':
         specifier: ^0.3.4
-        version: 0.3.4(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-bedrock-runtime@3.665.0)(@aws-sdk/client-lambda@3.665.0)(@aws-sdk/client-s3@3.665.0)(@aws-sdk/credential-provider-node@3.665.0(@aws-sdk/client-sso-oidc@3.665.0(@aws-sdk/client-sts@3.665.0))(@aws-sdk/client-sts@3.665.0))(@langchain/core@0.3.7(openai@4.67.1(encoding@0.1.13)(zod@3.23.8)))(@neondatabase/serverless@0.9.5)(@smithy/util-utf8@3.0.0)(axios@1.7.7)(encoding@0.1.13)(handlebars@4.7.8)(ignore@6.0.2)(lodash@4.17.21)(openai@4.67.1(encoding@0.1.13)(zod@3.23.8))(typesense@1.8.2(@babel/runtime@7.25.7))(ws@8.18.0)
+        version: 0.3.4(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-bedrock-runtime@3.665.0)(@aws-sdk/client-lambda@3.665.0)(@aws-sdk/client-s3@3.665.0)(@aws-sdk/credential-provider-node@3.665.0(@aws-sdk/client-sso-oidc@3.665.0(@aws-sdk/client-sts@3.665.0))(@aws-sdk/client-sts@3.665.0))(@langchain/core@0.3.7(openai@4.67.1(encoding@0.1.13)(zod@3.23.8)))(@neondatabase/serverless@0.9.5)(@smithy/util-utf8@2.3.0)(axios@1.7.7)(encoding@0.1.13)(handlebars@4.7.8)(ignore@5.3.1)(lodash@4.17.21)(openai@4.67.1(encoding@0.1.13)(zod@3.23.8))(typesense@1.8.2(@babel/runtime@7.25.7))(ws@8.18.0)
       '@langchain/core':
         specifier: ^0.3.7
         version: 0.3.7(openai@4.67.1(encoding@0.1.13)(zod@3.23.8))
@@ -101,7 +101,7 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(graphql@16.9.0)
       '@rukuma/core':
-        specifier: workspace:*
+        specifier: 'workspace:'
         version: link:../core
       arctic:
         specifier: ^1.9.2
@@ -4993,10 +4993,6 @@ packages:
     resolution: {integrity: sha512-5Fytz/IraMjqpwfd34ke28PTVMjZjJG2MPn5t7OE4eUCUNf8BAa7b5WUS9/Qvr6mwOQS7Mk6vdsMno5he+T8Xw==}
     engines: {node: '>= 4'}
 
-  ignore@6.0.2:
-    resolution: {integrity: sha512-InwqeHHN2XpumIkMvpl/DCJVrAHgCsG5+cn1XlnLWGwtZBm8QJfSusItfrwx81CTp5agNZqpKU2J/ccC5nGT4A==}
-    engines: {node: '>= 4'}
-
   immutable@3.7.6:
     resolution: {integrity: sha512-AizQPcaofEtO11RZhPPHBOJRdo/20MKQF9mBLnVkBoyHi1/zXK8fzVdnEpSV9gxqtnh6Qomfp3F0xT5qP/vThw==}
     engines: {node: '>=0.8.0'}
@@ -9702,7 +9698,7 @@ snapshots:
 
   '@kamilkisiela/fast-url-parser@1.1.4': {}
 
-  '@langchain/community@0.3.4(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-bedrock-runtime@3.665.0)(@aws-sdk/client-lambda@3.665.0)(@aws-sdk/client-s3@3.665.0)(@aws-sdk/credential-provider-node@3.665.0(@aws-sdk/client-sso-oidc@3.665.0(@aws-sdk/client-sts@3.665.0))(@aws-sdk/client-sts@3.665.0))(@langchain/core@0.3.7(openai@4.67.1(encoding@0.1.13)(zod@3.23.8)))(@neondatabase/serverless@0.9.5)(@smithy/util-utf8@3.0.0)(axios@1.7.7)(encoding@0.1.13)(handlebars@4.7.8)(ignore@6.0.2)(lodash@4.17.21)(openai@4.67.1(encoding@0.1.13)(zod@3.23.8))(typesense@1.8.2(@babel/runtime@7.25.7))(ws@8.18.0)':
+  '@langchain/community@0.3.4(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-bedrock-runtime@3.665.0)(@aws-sdk/client-lambda@3.665.0)(@aws-sdk/client-s3@3.665.0)(@aws-sdk/credential-provider-node@3.665.0(@aws-sdk/client-sso-oidc@3.665.0(@aws-sdk/client-sts@3.665.0))(@aws-sdk/client-sts@3.665.0))(@langchain/core@0.3.7(openai@4.67.1(encoding@0.1.13)(zod@3.23.8)))(@neondatabase/serverless@0.9.5)(@smithy/util-utf8@2.3.0)(axios@1.7.7)(encoding@0.1.13)(handlebars@4.7.8)(ignore@5.3.1)(lodash@4.17.21)(openai@4.67.1(encoding@0.1.13)(zod@3.23.8))(typesense@1.8.2(@babel/runtime@7.25.7))(ws@8.18.0)':
     dependencies:
       '@langchain/core': 0.3.7(openai@4.67.1(encoding@0.1.13)(zod@3.23.8))
       '@langchain/openai': 0.3.4(@langchain/core@0.3.7(openai@4.67.1(encoding@0.1.13)(zod@3.23.8)))(encoding@0.1.13)
@@ -9722,8 +9718,8 @@ snapshots:
       '@aws-sdk/client-s3': 3.665.0
       '@aws-sdk/credential-provider-node': 3.665.0(@aws-sdk/client-sso-oidc@3.665.0(@aws-sdk/client-sts@3.665.0))(@aws-sdk/client-sts@3.665.0)
       '@neondatabase/serverless': 0.9.5
-      '@smithy/util-utf8': 3.0.0
-      ignore: 6.0.2
+      '@smithy/util-utf8': 2.3.0
+      ignore: 5.3.1
       lodash: 4.17.21
       typesense: 1.8.2(@babel/runtime@7.25.7)
       ws: 8.18.0
@@ -12949,9 +12945,6 @@ snapshots:
       minimatch: 9.0.5
 
   ignore@5.3.1: {}
-
-  ignore@6.0.2:
-    optional: true
 
   immutable@3.7.6: {}
 
