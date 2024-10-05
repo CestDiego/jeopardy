@@ -1,44 +1,43 @@
 {
-    "name": "@rukuma/shared",
-    "version": "0.0.0",
-    "type": "module",
-    "scripts": {
-      "test": "sst bind 'vitest'",
-      "typecheck": "tsc -noEmit",
-      "@ctw/gen": "openapi-ts -i ./src/clients/ctw/openapi.json -o ./src/clients/ctw/api -c @hey-api/client-fetch"
-    },
-    "imports": {
-        "#*": [
-            "./src/*",
-            "./src/*.ts",
-            "./src/*.tsx",
-            "./src/*.js",
-            "./src/*.jsx",
-            "./src/*/index.ts",
-            "./src/*/index.tsx",
-            "./src/*/index.js",
-            "./src/*/index.jsx"
-        ]
-    },
-    "exports": {
-        "./": "./src/"
-    },
-    "devDependencies": {
-      "@hey-api/client-fetch": "^0.2.4",
-      "@hey-api/openapi-ts": "^0.52.9",
-      "vitest": "^2.0.5"
-    },
-    "dependencies": {
-      "@anthropic-ai/sdk": "^0.26.0",
-      "@aws-sdk/client-bedrock-runtime": "^3.631.0",
-      "@aws-sdk/types": "^3.609.0",
-      "libphonenumber-js": "^1.11.7",
-      "limiter": "^2.1.0",
-      "pino": "^9.3.2",
-      "pino-pretty": "^11.2.2",
-      "typesense": "^1.8.2",
-      "uuid": "^10.0.0",
-      "zod": "^3.23.8"
-    }
+  "name": "@rukuma/shared",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "sst bind 'vitest'",
+    "typecheck": "tsc -noEmit",
+    "@ctw/gen": "openapi-ts -i ./src/clients/ctw/openapi.json -o ./src/clients/ctw/api -c @hey-api/client-fetch"
+  },
+  "imports": {
+    "#*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*.js",
+      "./src/*.jsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx",
+      "./src/*/index.js",
+      "./src/*/index.jsx"
+    ]
+  },
+  "exports": {
+    "./": "./src/"
+  },
+  "devDependencies": {
+    "@hey-api/client-fetch": "^0.2.4",
+    "@hey-api/openapi-ts": "^0.52.9",
+    "vitest": "^2.0.5"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.28.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.631.0",
+    "@aws-sdk/types": "^3.609.0",
+    "libphonenumber-js": "^1.11.11",
+    "limiter": "^2.1.0",
+    "pino": "^9.3.2",
+    "pino-pretty": "^11.2.2",
+    "typesense": "^1.8.2",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.8"
   }
-  
+}

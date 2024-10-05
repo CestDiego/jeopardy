@@ -19,7 +19,7 @@
         ]
     },
     "exports": {
-        "./": "./src/"
+        "./*": "./src/*.ts"
     },
     "devDependencies": {
         "@types/aws-lambda": "^8.10.145",
@@ -30,7 +30,7 @@
         "@hono/zod-validator": "^0.3.0",
         "@lucia-auth/adapter-drizzle": "^1.1.0",
         "@pothos/core": "^4.2.0",
-        "@rukuma/core": "workspace:*",
+        "@rukuma/core": "workspace:",
         "arctic": "^1.9.2",
         "graphql-yoga": "^5.7.0",
         "hono": "^4.6.3",
