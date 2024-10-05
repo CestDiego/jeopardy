@@ -6,6 +6,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
+import type { APIGatewayProxyEventV2 } from "aws-lambda";
 import Sharp, { type FormatEnum } from "sharp";
 import { logger } from "../../../shared/src/logger";
 import { retry } from "../../../shared/src/utils";
@@ -28,7 +29,7 @@ interface ImageOperations {
   quality?: number;
 }
 
-export const handler = async (event: any) => {
+export const handler = async (event: APIGatewayProxyEventV2) => {
   try {
     if (!validateRequest(event)) {
       return sendError(400, "Only GET method is supported", event);
@@ -94,7 +95,7 @@ export const handler = async (event: any) => {
   }
 };
 
-function validateRequest(event): boolean {
+function validateRequest(event: APIGatewayProxyEventV2): boolean {
   return (
     event.requestContext?.http && event.requestContext.http.method === "GET"
   );
@@ -123,7 +124,7 @@ function parseImageOperations(operationsPrefix: string): ImageOperations {
 
   console.log({ operationsPrefix, operationsArray });
 
-  operationsArray.forEach((op) => {
+  for (const op of operationsArray) {
     const [key, value] = op.split("=");
     if (key === "width" || key === "height") {
       operations.resize = operations.resize || {};
@@ -134,7 +135,7 @@ function parseImageOperations(operationsPrefix: string): ImageOperations {
     } else if (key === "quality") {
       operations.quality = Number.parseInt(value);
     }
-  });
+  }
 
   console.log("parsed", { operations });
 
@@ -282,12 +283,12 @@ async function applyWatermark(image: Sharp.Sharp, operations: ImageOperations) {
     .sharpen({ sigma: 1, m1: 1, m2: 1 });
 }
 
-function sendError(statusCode: number, body: string, error: any) {
+function sendError(statusCode: number, body: string, error: unknown) {
   logError(body, error);
   return { statusCode, body };
 }
 
-function logError(body: string, error: any) {
+function logError(body: string, error: unknown) {
   console.log("APPLICATION ERROR", body);
   console.log(error);
 }

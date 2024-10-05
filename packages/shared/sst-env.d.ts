@@ -20,6 +20,10 @@ declare module "sst" {
       "type": "sst.aws.Function"
       "url": string
     }
+    "Bucket": {
+      "name": string
+      "type": "sst.aws.Bucket"
+    }
     "DATABASE_CONNECTIONS": {
       "primary": string
       "replicas": any

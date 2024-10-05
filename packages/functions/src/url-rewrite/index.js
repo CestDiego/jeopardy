@@ -7,7 +7,7 @@ function handler(event) {
   //  validate, process and normalize the requested operations in query parameters
   const normalizedOperations = {};
   if (request.querystring) {
-    Object.keys(request.querystring).forEach((operation) => {
+    for (const [operation] of Object.entries(request.querystring)) {
       switch (operation.toLowerCase()) {
         case "format": {
           const SUPPORTED_FORMATS = [
@@ -72,7 +72,7 @@ function handler(event) {
         default:
           break;
       }
-    });
+    }
     //rewrite the path to normalized version if valid operations are found
     if (Object.keys(normalizedOperations).length > 0) {
       // put them in order

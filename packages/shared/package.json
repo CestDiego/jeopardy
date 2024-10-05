@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "sst bind 'vitest'",
-    "typecheck": "tsc -noEmit",
+    "typecheck": "tsc -noEmit --pretty",
     "@ctw/gen": "openapi-ts -i ./src/clients/ctw/openapi.json -o ./src/clients/ctw/api -c @hey-api/client-fetch"
   },
   "imports": {
@@ -21,7 +21,7 @@
     ]
   },
   "exports": {
-    "./": "./src/"
+    "./*": "./src/*.ts"
   },
   "devDependencies": {
     "@hey-api/client-fetch": "^0.2.4",

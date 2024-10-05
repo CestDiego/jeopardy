@@ -23,6 +23,7 @@ export default $config({
     };
   },
   async run() {
+    const bucket = new sst.aws.Bucket("Bucket");
     const createSecrets = <T extends string>(secrets: T[]) =>
       secrets.reduce<Record<T, sst.Secret>>(
         (acc, secret) => {

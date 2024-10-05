@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "typecheck": "tsc -noEmit",
+    "typecheck": "tsc -noEmit --pretty",
     "db:pull": "sst shell drizzle-kit introspect --introspect-casing=camel",
     "db:push": "sst shell drizzle-kit push",
     "db:branch:get": "sst shell tsx ./src/utils/neon.db get",
