@@ -7,8 +7,8 @@
  */
 export async function retry<T>(
   operation: () => Promise<T>,
-  maxAttempts: number = 3,
-  delay: number = 1000,
+  maxAttempts = 3,
+  delay = 1000,
 ): Promise<T> {
   let lastError: Error | undefined;
 

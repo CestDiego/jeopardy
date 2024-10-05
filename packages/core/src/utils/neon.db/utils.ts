@@ -1,6 +1,6 @@
+import { logger } from "../../../../shared/src/logger";
 import { NeonClient } from "./client";
 import type { Branch } from "./types";
-import { logger } from "../../../../shared/src/logger";
 
 class NeonDBUtils {
   private readonly NEON_API_KEY: string;

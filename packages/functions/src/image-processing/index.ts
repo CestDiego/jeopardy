@@ -6,10 +6,10 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
-import Sharp, { FormatEnum } from "sharp";
-import { Watermark } from "./watermark";
+import Sharp, { type FormatEnum } from "sharp";
 import { logger } from "../../../shared/src/logger";
 import { retry } from "../../../shared/src/utils";
+import { Watermark } from "./watermark";
 
 const s3Client = new S3Client({
   maxAttempts: 3,
@@ -45,7 +45,7 @@ export const handler = async (event: any) => {
 
     const operations = parseImageOperations(operationsPrefix);
 
-    let { originalImageBody, contentType } =
+    const { originalImageBody, contentType } =
       await downloadOriginalImage(originalImagePath);
 
     let transformedImage = await processImage(
@@ -129,12 +129,12 @@ function parseImageOperations(operationsPrefix: string): ImageOperations {
     const [key, value] = op.split("=");
     if (key === "width" || key === "height") {
       operations.resize = operations.resize || {};
-      operations.resize[key] = parseInt(value);
+      operations.resize[key] = Number.parseInt(value);
       console.log({ key, value });
     } else if (key === "format") {
       operations.format = value as keyof FormatEnum;
     } else if (key === "quality") {
-      operations.quality = parseInt(value);
+      operations.quality = Number.parseInt(value);
     }
   });
 
