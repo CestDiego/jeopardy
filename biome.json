@@ -10,7 +10,8 @@
     "ignore": [
       ".sst",
       "sst-env.d.ts",
-      "packages/graphql/genql"
+      "packages/graphql/genql",
+      "packages/core/migrations"
     ]
   },
   "formatter": {
@@ -25,6 +26,11 @@
     "enabled": true,
     "rules": {
       "recommended": true
+    }
+  },
+  "json": {
+    "formatter": {
+      "indentWidth": 2
     }
   },
   "javascript": {
