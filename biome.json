@@ -7,7 +7,11 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": []
+    "ignore": [
+      ".sst",
+      "sst-env.d.ts",
+      "packages/graphql/genql"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -25,7 +29,7 @@
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single"
+      "quoteStyle": "double"
     }
   }
 }
