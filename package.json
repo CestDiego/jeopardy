@@ -5,7 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "typecheck": "pnpm run --no-bail -r typecheck",
+    "check:biome": "pnpm biome check",
+    "check:ts": "pnpm run --no-bail -r typecheck",
     "dev": "sst dev",
     "deploy": "sst deploy",
     "sso": "aws sso login --sso-session=onde-vamos"
