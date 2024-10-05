@@ -64,13 +64,16 @@ export default $config({
     });
 
     //  // CloudFront Function for URL rewrites
-    const urlRewriteFunction = new aws.cloudfront.Function(`CDNUrlRewrite`, {
-      runtime: "cloudfront-js-2.0",
-      code: pulumi.interpolate`${fs.readFileSync(
-        "packages/functions/src/url-rewrite/index.js",
-        "utf8"
-      )}`,
-    });
+    const urlRewriteFunction = new aws.cloudfront.Function(
+      `${$app.name}-${$app.stage}-CDNUrlRewrite`.slice(0, 64),
+      {
+        runtime: "cloudfront-js-2.0",
+        code: pulumi.interpolate`${fs.readFileSync(
+          "packages/functions/src/url-rewrite/index.js",
+          "utf8"
+        )}`,
+      }
+    );
 
     const responseHeadersPolicy = new aws.cloudfront.ResponseHeadersPolicy(
       `${$app.name}-${$app.stage}-CDNResponseHeadersPolicy`.slice(0, 64),
