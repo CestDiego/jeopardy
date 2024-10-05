@@ -1,5 +1,9 @@
 import { lucia as auth, google_auth } from "@rukuma/core/clients/lucia";
-import { OAuth2RequestError, generateCodeVerifier, generateState } from "arctic";
+import {
+  OAuth2RequestError,
+  generateCodeVerifier,
+  generateState,
+} from "arctic";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { handle } from "hono/aws-lambda";
@@ -67,7 +71,10 @@ app.get("/login/google/callback", async (c) => {
   }
 
   try {
-    const tokens = await google_auth.validateAuthorizationCode(code, storedCodeVerifier);
+    const tokens = await google_auth.validateAuthorizationCode(
+      code,
+      storedCodeVerifier,
+    );
     console.log({ tokens });
 
     // const getUser = async () => {
@@ -141,7 +148,9 @@ const validateSession = async (c, next) => {
 // Example of using session validation middleware
 app.get("/protected", validateSession, (c) => {
   const session = c.get("session");
-  return c.json({ message: `Hello, ${session.user.username || session.user.name}!` });
+  return c.json({
+    message: `Hello, ${session.user.username || session.user.name}!`,
+  });
 });
 
 // Error handling

@@ -1,41 +1,41 @@
 {
-    "name": "@rukuma/functions",
-    "version": "0.0.0",
-    "type": "module",
-    "scripts": {
-        "typecheck": "tsc -noEmit"
-    },
-    "imports": {
-        "#*": [
-            "./src/*",
-            "./src/*.ts",
-            "./src/*.tsx",
-            "./src/*.js",
-            "./src/*.jsx",
-            "./src/*/index.ts",
-            "./src/*/index.tsx",
-            "./src/*/index.js",
-            "./src/*/index.jsx"
-        ]
-    },
-    "exports": {
-        "./*": "./src/*.ts"
-    },
-    "devDependencies": {
-        "@types/aws-lambda": "^8.10.145",
-        "@types/node": "^22.7.4"
-    },
-    "dependencies": {
-        "@aws-sdk/client-s3": "^3.665.0",
-        "@hono/zod-validator": "^0.3.0",
-        "@lucia-auth/adapter-drizzle": "^1.1.0",
-        "@pothos/core": "^4.2.0",
-        "@rukuma/core": "workspace:",
-        "arctic": "^1.9.2",
-        "graphql-yoga": "^5.7.0",
-        "hono": "^4.6.3",
-        "lucia": "^3.2.0",
-        "sharp": "^0.33.5",
-        "zod": "^3.23.8"
-    }
+  "name": "@rukuma/functions",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -noEmit"
+  },
+  "imports": {
+    "#*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*.js",
+      "./src/*.jsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx",
+      "./src/*/index.js",
+      "./src/*/index.jsx"
+    ]
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.145",
+    "@types/node": "^22.7.4"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.665.0",
+    "@hono/zod-validator": "^0.3.0",
+    "@lucia-auth/adapter-drizzle": "^1.1.0",
+    "@pothos/core": "^4.2.0",
+    "@rukuma/core": "workspace:",
+    "arctic": "^1.9.2",
+    "graphql-yoga": "^5.7.0",
+    "hono": "^4.6.3",
+    "lucia": "^3.2.0",
+    "sharp": "^0.33.5",
+    "zod": "^3.23.8"
+  }
 }

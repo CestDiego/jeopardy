@@ -8,7 +8,7 @@
 export async function retry<T>(
   operation: () => Promise<T>,
   maxAttempts: number = 3,
-  delay: number = 1000
+  delay: number = 1000,
 ): Promise<T> {
   let lastError: Error | undefined;
 
@@ -19,12 +19,14 @@ export async function retry<T>(
       lastError = error as Error;
       if (attempt < maxAttempts) {
         console.warn(`Attempt ${attempt} failed. Retrying in ${delay}ms...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   }
 
-  throw new Error(`Operation failed after ${maxAttempts} attempts. Last error: ${lastError?.message}`);
+  throw new Error(
+    `Operation failed after ${maxAttempts} attempts. Last error: ${lastError?.message}`,
+  );
 }
 
 // Example usage:

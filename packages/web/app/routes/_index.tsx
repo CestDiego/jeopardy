@@ -65,14 +65,14 @@ const RukumaLandingPage = () => {
             </div>
             <div className="md:w-1/2">
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">
-                Lucuma is a subtropical fruit native to Peru, often called "Gold of the
-                Incas". It has a unique, maple-like sweetness and a soft, dry texture
-                similar to a cooked egg yolk.
+                Lucuma is a subtropical fruit native to Peru, often called "Gold
+                of the Incas". It has a unique, maple-like sweetness and a soft,
+                dry texture similar to a cooked egg yolk.
               </p>
               <p className="text-lg text-gray-700 leading-relaxed">
-                Rich in nutrients and low in sugar, Lucuma has been used for centuries in
-                Peruvian cuisine and is now gaining popularity worldwide as a superfood
-                and natural sweetener.
+                Rich in nutrients and low in sugar, Lucuma has been used for
+                centuries in Peruvian cuisine and is now gaining popularity
+                worldwide as a superfood and natural sweetener.
               </p>
             </div>
           </div>
@@ -94,7 +94,9 @@ const RukumaLandingPage = () => {
                 className="bg-white/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-2"
               >
                 <CardHeader>
-                  <CardTitle className="text-yellow-700">{benefit.title}</CardTitle>
+                  <CardTitle className="text-yellow-700">
+                    {benefit.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="text-gray-600">
@@ -112,7 +114,9 @@ const RukumaLandingPage = () => {
       <section className="py-20 bg-gradient-to-r from-yellow-400 to-green-400 text-white text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-yellow-500 mix-blend-multiply"></div>
         <div className="container mx-auto px-4 relative z-10">
-          <h2 className="text-4xl font-bold mb-6 drop-shadow-lg">Try Rukuma Today!</h2>
+          <h2 className="text-4xl font-bold mb-6 drop-shadow-lg">
+            Try Rukuma Today!
+          </h2>
           <p className="text-xl mb-8 drop-shadow">
             Experience the delicious and nutritious power of Lucuma
           </p>

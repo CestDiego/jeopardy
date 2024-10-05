@@ -1,55 +1,55 @@
 {
-    "name": "@rukuma/core",
-    "version": "0.0.0",
-    "type": "module",
-    "scripts": {
-        "typecheck": "tsc -noEmit",
-        "db:pull": "sst shell drizzle-kit introspect --introspect-casing=camel",
-        "db:push": "sst shell drizzle-kit push",
-        "db:branch:get": "sst shell tsx ./src/utils/neon.db get",
-        "db:branch:reset": "sst shell tsx ./src/utils/neon.db reset",
-        "db:branch:prepare-pr-branch": "sst shell tsx ./src/utils/neon.db prepare-pr-branch",
-        "db:branch:delete": "sst shell tsx ./src/utils/neon.db delete",
-        "drizzle-studio": "sst shell drizzle-kit studio",
-        "drizzle-kit:up": "sst shell drizzle-kit up",
-        "migration:create": "sst shell drizzle-kit generate",
-        "migration:amend": "sst shell drizzle-kit drop && sst shell drizzle-kit generate && sst shell drizzle-kit migrate",
-        "migration:check": "sst shell drizzle-kit check",
-        "migration:run": "sst bind tsx ./src/migrate.ts"
-    },
-    "imports": {
-        "#*": [
-            "./src/*",
-            "./src/*.ts",
-            "./src/*.tsx",
-            "./src/*.js",
-            "./src/*.jsx",
-            "./src/*/index.ts",
-            "./src/*/index.tsx",
-            "./src/*/index.js",
-            "./src/*/index.jsx"
-        ]
-    },
-    "exports": {
-        "./*": "./src/*.ts"
-    },
-    "devDependencies": {
-        "@types/node": "^22.7.4",
-        "drizzle-kit": "^0.24.2",
-        "vitest": "^2.1.2"
-    },
-    "dependencies": {
-        "@aws-sdk/client-s3": "^3.665.0",
-        "@aws-sdk/s3-request-presigner": "^3.665.0",
-        "@langchain/community": "^0.3.4",
-        "@langchain/core": "^0.3.7",
-        "@neondatabase/serverless": "^0.9.5",
-        "drizzle-orm": "^0.33.0",
-        "drizzle-zod": "^0.5.1",
-        "hono": "^4.6.3",
-        "pino": "^9.4.0",
-        "ts-custom-error": "^3.3.1",
-        "ulid": "^2.3.0",
-        "zod": "^3.23.8"
-    }
+  "name": "@rukuma/core",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -noEmit",
+    "db:pull": "sst shell drizzle-kit introspect --introspect-casing=camel",
+    "db:push": "sst shell drizzle-kit push",
+    "db:branch:get": "sst shell tsx ./src/utils/neon.db get",
+    "db:branch:reset": "sst shell tsx ./src/utils/neon.db reset",
+    "db:branch:prepare-pr-branch": "sst shell tsx ./src/utils/neon.db prepare-pr-branch",
+    "db:branch:delete": "sst shell tsx ./src/utils/neon.db delete",
+    "drizzle-studio": "sst shell drizzle-kit studio",
+    "drizzle-kit:up": "sst shell drizzle-kit up",
+    "migration:create": "sst shell drizzle-kit generate",
+    "migration:amend": "sst shell drizzle-kit drop && sst shell drizzle-kit generate && sst shell drizzle-kit migrate",
+    "migration:check": "sst shell drizzle-kit check",
+    "migration:run": "sst bind tsx ./src/migrate.ts"
+  },
+  "imports": {
+    "#*": [
+      "./src/*",
+      "./src/*.ts",
+      "./src/*.tsx",
+      "./src/*.js",
+      "./src/*.jsx",
+      "./src/*/index.ts",
+      "./src/*/index.tsx",
+      "./src/*/index.js",
+      "./src/*/index.jsx"
+    ]
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "drizzle-kit": "^0.24.2",
+    "vitest": "^2.1.2"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.665.0",
+    "@aws-sdk/s3-request-presigner": "^3.665.0",
+    "@langchain/community": "^0.3.4",
+    "@langchain/core": "^0.3.7",
+    "@neondatabase/serverless": "^0.9.5",
+    "drizzle-orm": "^0.33.0",
+    "drizzle-zod": "^0.5.1",
+    "hono": "^4.6.3",
+    "pino": "^9.4.0",
+    "ts-custom-error": "^3.3.1",
+    "ulid": "^2.3.0",
+    "zod": "^3.23.8"
+  }
 }

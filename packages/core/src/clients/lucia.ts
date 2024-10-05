@@ -5,7 +5,11 @@ import { db } from "#db";
 import { sessionTable, userTable } from "#schema";
 import { useEnv } from "#validator";
 
-export const adapter = new DrizzlePostgreSQLAdapter(db, sessionTable, userTable);
+export const adapter = new DrizzlePostgreSQLAdapter(
+  db,
+  sessionTable,
+  userTable,
+);
 
 const Environment = useEnv();
 

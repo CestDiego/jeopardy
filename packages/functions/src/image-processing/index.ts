@@ -1,129 +1,146 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
-import Sharp, { FormatEnum } from 'sharp'
-import { Watermark } from './watermark'
-import { logger } from '../../../shared/src/logger'
-import { retry } from '../../../shared/src/utils'
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
+import Sharp, { FormatEnum } from "sharp";
+import { Watermark } from "./watermark";
+import { logger } from "../../../shared/src/logger";
+import { retry } from "../../../shared/src/utils";
 
 const s3Client = new S3Client({
   maxAttempts: 3,
-})
+});
 
 const {
   originalImageBucketName: S3_ORIGINAL_IMAGE_BUCKET,
   transformedImageBucketName: S3_TRANSFORMED_IMAGE_BUCKET,
   transformedImageCacheTTL: TRANSFORMED_IMAGE_CACHE_TTL,
   maxImageSize: MAX_IMAGE_SIZE,
-} = process.env
+} = process.env;
 
 interface ImageOperations {
-  resize?: { width: number }
-  format?: keyof FormatEnum
-  quality?: number
+  resize?: { width: number };
+  format?: keyof FormatEnum;
+  quality?: number;
 }
 
 export const handler = async (event: any) => {
   try {
     if (!validateRequest(event)) {
-      return sendError(400, 'Only GET method is supported', event)
+      return sendError(400, "Only GET method is supported", event);
     }
 
-    logger.info({ event }, 'event')
+    logger.info({ event }, "event");
 
-    const { originalImagePath, operationsPrefix } = parseImagePath(event.requestContext.http.path)
+    const { originalImagePath, operationsPrefix } = parseImagePath(
+      event.requestContext.http.path,
+    );
 
-    if (originalImagePath === 'favicon.ico') return sendError(404, "Favicon Doesn't Exist", event)
+    if (originalImagePath === "favicon.ico")
+      return sendError(404, "Favicon Doesn't Exist", event);
 
-    const operations = parseImageOperations(operationsPrefix)
+    const operations = parseImageOperations(operationsPrefix);
 
-    let { originalImageBody, contentType } = await downloadOriginalImage(originalImagePath)
+    let { originalImageBody, contentType } =
+      await downloadOriginalImage(originalImagePath);
 
-    let transformedImage = await processImage(originalImageBody, operations, contentType)
+    let transformedImage = await processImage(
+      originalImageBody,
+      operations,
+      contentType,
+    );
 
-    if (!originalImagePath.includes('avatars')) {
-      transformedImage = await applyWatermark(transformedImage, operations)
+    if (!originalImagePath.includes("avatars")) {
+      transformedImage = await applyWatermark(transformedImage, operations);
     }
 
-    const transformedImageBuffer = await transformedImage.toBuffer()
+    const transformedImageBuffer = await transformedImage.toBuffer();
 
     if (Buffer.byteLength(transformedImageBuffer) > Number(MAX_IMAGE_SIZE)) {
-      return handleLargeImage(originalImagePath, operationsPrefix)
+      return handleLargeImage(originalImagePath, operationsPrefix);
     }
 
     if (S3_TRANSFORMED_IMAGE_BUCKET) {
       logger.info(
-        `Uploading transformed image to S3 ${S3_TRANSFORMED_IMAGE_BUCKET}/${originalImagePath}/${operationsPrefix}`
-      )
+        `Uploading transformed image to S3 ${S3_TRANSFORMED_IMAGE_BUCKET}/${originalImagePath}/${operationsPrefix}`,
+      );
       await retry(
         async () =>
           await uploadTransformedImage(
             transformedImageBuffer,
             originalImagePath,
             operationsPrefix,
-            contentType
-          )
-      )
+            contentType,
+          ),
+      );
     }
 
     return {
       statusCode: 200,
-      body: transformedImageBuffer.toString('base64'),
+      body: transformedImageBuffer.toString("base64"),
       isBase64Encoded: true,
       headers: {
-        'Content-Type': contentType,
-        'Cache-Control': TRANSFORMED_IMAGE_CACHE_TTL,
+        "Content-Type": contentType,
+        "Cache-Control": TRANSFORMED_IMAGE_CACHE_TTL,
       },
-    }
+    };
   } catch (error) {
-    logger.error(error, 'Error processing image')
-    return sendError(500, 'Error processing image', error)
+    logger.error(error, "Error processing image");
+    return sendError(500, "Error processing image", error);
   }
-}
+};
 
 function validateRequest(event): boolean {
   return (
-    event.requestContext && event.requestContext.http && event.requestContext.http.method === 'GET'
-  )
+    event.requestContext &&
+    event.requestContext.http &&
+    event.requestContext.http.method === "GET"
+  );
 }
 
-function parseImagePath(path: string): { originalImagePath: string; operationsPrefix: string } {
-  const pathArray = path.split('/')
-  const operationsPrefix = pathArray.pop()
-  pathArray.shift()
-  const originalImagePath = pathArray.join('/')
-  return { originalImagePath, operationsPrefix }
+function parseImagePath(path: string): {
+  originalImagePath: string;
+  operationsPrefix: string;
+} {
+  const pathArray = path.split("/");
+  const operationsPrefix = pathArray.pop();
+  pathArray.shift();
+  const originalImagePath = pathArray.join("/");
+  return { originalImagePath, operationsPrefix };
 }
 
 function parseImageOperations(operationsPrefix: string): ImageOperations {
-  const operationsArray = operationsPrefix.split(',')
+  const operationsArray = operationsPrefix.split(",");
   const operations: ImageOperations = {
-    format: 'webp',
+    format: "webp",
     resize: {
       width: 1000,
     },
     quality: 100,
-  }
+  };
 
-  console.log({ operationsPrefix, operationsArray })
+  console.log({ operationsPrefix, operationsArray });
 
   operationsArray.forEach((op) => {
-    const [key, value] = op.split('=')
-    if (key === 'width' || key === 'height') {
-      operations.resize = operations.resize || {}
-      operations.resize[key] = parseInt(value)
-      console.log({ key, value })
-    } else if (key === 'format') {
-      operations.format = value as keyof FormatEnum
-    } else if (key === 'quality') {
-      operations.quality = parseInt(value)
+    const [key, value] = op.split("=");
+    if (key === "width" || key === "height") {
+      operations.resize = operations.resize || {};
+      operations.resize[key] = parseInt(value);
+      console.log({ key, value });
+    } else if (key === "format") {
+      operations.format = value as keyof FormatEnum;
+    } else if (key === "quality") {
+      operations.quality = parseInt(value);
     }
-  })
+  });
 
-  console.log('parsed', { operations })
+  console.log("parsed", { operations });
 
-  return operations
+  return operations;
 }
 
 async function downloadOriginalImage(originalImagePath: string) {
@@ -131,55 +148,63 @@ async function downloadOriginalImage(originalImagePath: string) {
     const getOriginalImageCommand = new GetObjectCommand({
       Bucket: S3_ORIGINAL_IMAGE_BUCKET,
       Key: originalImagePath,
-    })
-    const { Body, ContentType } = await s3Client.send(getOriginalImageCommand)
+    });
+    const { Body, ContentType } = await s3Client.send(getOriginalImageCommand);
     if (!Body || !ContentType) {
-      throw new Error(`Error downloading original image ${originalImagePath}`)
+      throw new Error(`Error downloading original image ${originalImagePath}`);
     }
     return {
       originalImageBody: await Body.transformToByteArray(),
       contentType: ContentType,
-    }
+    };
   } catch (error) {
-    logger.error(error)
-    throw new Error(`Error downloading original image ${originalImagePath}`, error)
+    logger.error(error);
+    throw new Error(
+      `Error downloading original image ${originalImagePath}`,
+      error,
+    );
   }
 }
 
 async function processImage(
   originalImageBody: Uint8Array,
   operations: ImageOperations,
-  contentType: string
+  contentType: string,
 ) {
-  let transformedImage = Sharp(originalImageBody, { failOn: 'none', animated: true })
-  const metadata = await transformedImage.metadata()
+  let transformedImage = Sharp(originalImageBody, {
+    failOn: "none",
+    animated: true,
+  });
+  const metadata = await transformedImage.metadata();
 
   if (operations.resize) {
-    console.log('operations at resize', { operations })
-    transformedImage = transformedImage.resize(operations.resize)
+    console.log("operations at resize", { operations });
+    transformedImage = transformedImage.resize(operations.resize);
   }
 
   if (metadata.orientation) {
-    transformedImage = transformedImage.rotate()
+    transformedImage = transformedImage.rotate();
   }
 
   if (operations.format) {
-    contentType = `image/${operations.format}`
-    const formatOptions = operations.quality ? { quality: operations.quality } : {}
+    contentType = `image/${operations.format}`;
+    const formatOptions = operations.quality
+      ? { quality: operations.quality }
+      : {};
     transformedImage = transformedImage.toFormat(
       operations.format as keyof FormatEnum,
-      formatOptions
-    )
+      formatOptions,
+    );
   }
 
-  return transformedImage
+  return transformedImage;
 }
 
 async function uploadTransformedImage(
   imageBuffer: Buffer,
   originalImagePath: string,
   operationsPrefix: string,
-  contentType: string
+  contentType: string,
 ) {
   try {
     const putImageCommand = new PutObjectCommand({
@@ -187,24 +212,24 @@ async function uploadTransformedImage(
       Bucket: S3_TRANSFORMED_IMAGE_BUCKET,
       Key: `${originalImagePath}/${operationsPrefix}`,
       ContentType: contentType,
-      Metadata: { 'cache-control': TRANSFORMED_IMAGE_CACHE_TTL },
-    })
-    const upload = await s3Client.send(putImageCommand)
+      Metadata: { "cache-control": TRANSFORMED_IMAGE_CACHE_TTL },
+    });
+    const upload = await s3Client.send(putImageCommand);
     if (upload.$metadata.httpStatusCode === 200) {
       logger.info(
-        `Uploaded transformed image to S3 ${S3_TRANSFORMED_IMAGE_BUCKET}/${originalImagePath}/${operationsPrefix}`
-      )
+        `Uploaded transformed image to S3 ${S3_TRANSFORMED_IMAGE_BUCKET}/${originalImagePath}/${operationsPrefix}`,
+      );
     } else {
       logger.warn(
         upload.$metadata,
-        `Upload to S3 might have failed for ${S3_TRANSFORMED_IMAGE_BUCKET}/${originalImagePath}/${operationsPrefix}`
-      )
+        `Upload to S3 might have failed for ${S3_TRANSFORMED_IMAGE_BUCKET}/${originalImagePath}/${operationsPrefix}`,
+      );
       throw new Error(
-        `Upload to S3 might have failed for ${S3_TRANSFORMED_IMAGE_BUCKET}/${originalImagePath}/${operationsPrefix}`
-      )
+        `Upload to S3 might have failed for ${S3_TRANSFORMED_IMAGE_BUCKET}/${originalImagePath}/${operationsPrefix}`,
+      );
     }
   } catch (error) {
-    logger.error(error, 'Could not upload transformed image to S3')
+    logger.error(error, "Could not upload transformed image to S3");
   }
 }
 
@@ -213,54 +238,58 @@ function handleLargeImage(originalImagePath: string, operationsPrefix: string) {
     return {
       statusCode: 302,
       headers: {
-        Location: `/${originalImagePath}?${operationsPrefix.replace(/,/g, '&')}`,
-        'Cache-Control': 'private,no-store',
+        Location: `/${originalImagePath}?${operationsPrefix.replace(/,/g, "&")}`,
+        "Cache-Control": "private,no-store",
       },
-    }
+    };
   }
-  return sendError(403, 'Requested transformed image is too big', '')
+  return sendError(403, "Requested transformed image is too big", "");
 }
 
 async function applyWatermark(image: Sharp.Sharp, operations: ImageOperations) {
   // TODO: Check if the image should be watermarked
   // Avatars shouldn't be watermarked and they live under /avatars/ path
-  const meta = await image.metadata()
-  let inputImageSize = meta.width || 0
+  const meta = await image.metadata();
+  let inputImageSize = meta.width || 0;
   // metadata for the transformed image doesn't change when we transform it :(
   if (operations.resize?.width) {
-    inputImageSize = operations.resize.width
+    inputImageSize = operations.resize.width;
   }
 
   // Skip watermark for small images
   if (inputImageSize < 200) {
-    console.log('Skipping watermarking for too small images')
-    return image
+    console.log("Skipping watermarking for too small images");
+    return image;
   }
   // For now we are just 1/5th of the image size
-  const watermarkSize = Math.floor(inputImageSize * 0.2)
-  console.log({ watermarkSize, inputImageSize })
+  const watermarkSize = Math.floor(inputImageSize * 0.2);
+  console.log({ watermarkSize, inputImageSize });
 
-  const watermark = Sharp(Buffer.from(Watermark, 'base64')).resize(watermarkSize, watermarkSize, {
-    fit: 'inside',
-  })
+  const watermark = Sharp(Buffer.from(Watermark, "base64")).resize(
+    watermarkSize,
+    watermarkSize,
+    {
+      fit: "inside",
+    },
+  );
 
   return image
     .composite([
       {
         input: await watermark.toBuffer(),
-        gravity: 'center',
-        blend: 'over',
+        gravity: "center",
+        blend: "over",
       },
     ])
-    .sharpen({ sigma: 1, m1: 1, m2: 1 })
+    .sharpen({ sigma: 1, m1: 1, m2: 1 });
 }
 
 function sendError(statusCode: number, body: string, error: any) {
-  logError(body, error)
-  return { statusCode, body }
+  logError(body, error);
+  return { statusCode, body };
 }
 
 function logError(body: string, error: any) {
-  console.log('APPLICATION ERROR', body)
-  console.log(error)
+  console.log("APPLICATION ERROR", body);
+  console.log(error);
 }

@@ -1,17 +1,17 @@
-import type { CodegenConfig } from '@graphql-codegen/cli'
-import { printSchema } from 'graphql'
-import { schema } from '../functions/src/graphql/schema'
+import type { CodegenConfig } from "@graphql-codegen/cli";
+import { printSchema } from "graphql";
+import { schema } from "../functions/src/graphql/schema";
 
 const config: CodegenConfig = {
   schema: printSchema(schema),
   generates: {
-    'schema.graphql': {
-      plugins: ['schema-ast'],
+    "schema.graphql": {
+      plugins: ["schema-ast"],
       hooks: {
-        afterOneFileWrite: ['npx @genql/cli --esm --output ./genql --schema'],
+        afterOneFileWrite: ["npx @genql/cli --esm --output ./genql --schema"],
       },
     },
   },
-}
+};
 
-export default config
+export default config;

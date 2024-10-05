@@ -1,7 +1,11 @@
 // Contains the prompt generation logic for various models.
 import { BedrockChat } from "@langchain/community/chat_models/bedrock";
 import type { MessageContent } from "@langchain/core/messages";
-import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
+import {
+  AIMessage,
+  HumanMessage,
+  SystemMessage,
+} from "@langchain/core/messages";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
 
@@ -49,7 +53,10 @@ export function createModel(input: ModelInput) {
   return new BedrockChat(input);
 }
 
-function interpolateInput(prompt: string, input: Record<string, unknown>): string {
+function interpolateInput(
+  prompt: string,
+  input: Record<string, unknown>,
+): string {
   const keys = Object.keys(input);
   const regex = new RegExp(`\\{(${keys.join("|")})\\}`, "g");
 

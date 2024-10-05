@@ -86,5 +86,7 @@ export function setTheme(theme: Theme | string) {
 }
 
 function validateTheme(theme: string | null): Theme {
-  return theme === "light" || theme === "dark" || theme === "system" ? theme : "system";
+  return theme === "light" || theme === "dark" || theme === "system"
+    ? theme
+    : "system";
 }
