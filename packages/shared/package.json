@@ -7,6 +7,22 @@
       "typecheck": "tsc -noEmit",
       "@ctw/gen": "openapi-ts -i ./src/clients/ctw/openapi.json -o ./src/clients/ctw/api -c @hey-api/client-fetch"
     },
+    "imports": {
+        "#*": [
+            "./src/*",
+            "./src/*.ts",
+            "./src/*.tsx",
+            "./src/*.js",
+            "./src/*.jsx",
+            "./src/*/index.ts",
+            "./src/*/index.tsx",
+            "./src/*/index.js",
+            "./src/*/index.jsx"
+        ]
+    },
+    "exports": {
+        "./": "./src/"
+    },
     "devDependencies": {
       "@hey-api/client-fetch": "^0.2.4",
       "@hey-api/openapi-ts": "^0.52.9",

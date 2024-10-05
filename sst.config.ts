@@ -33,7 +33,7 @@ export default $config({
       },
     })
 
-    const bucket = new sst.aws.Bucket('Uploads', {
+    const uploadsBucket = new sst.aws.Bucket('Uploads', {
         access: 'cloudfront',
     })
 
@@ -41,12 +41,26 @@ export default $config({
       access: 'cloudfront',
     });
 
-
     // Define imageResizer Lambda function
     const imageResizer = new sst.aws.Function(`ImageResizer`, {
       handler: 'packages/functions/src/image-processing/index.handler',
       url: true,
-    });
+      nodejs: {
+        install: ['sharp'],
+      },
+      timeout: '10 seconds',
+      memory: '1500 MB',
+      logging: {
+        retention: '1 day',
+      },
+      link: [transformedImageBucket, uploadsBucket],
+      environment: {
+        originalImageBucketName: uploadsBucket.name,
+        transformedImageBucketName: transformedImageBucket.name,
+        transformedImageCacheTTL: 'max-age=31622400',
+        maxImageSize: '4700000',
+      },
+    })
 
     //  // CloudFront Function for URL rewrites
     const urlRewriteFunction = new aws.cloudfront.Function(`CDNUrlRewrite`, {
@@ -62,6 +76,7 @@ export default $config({
         {
           originId: 'S3Origin',
           domainName: transformedImageBucket.domain,
+
           s3OriginConfig: {
             originAccessIdentity: new aws.cloudfront.OriginAccessIdentity(
               `${$app.name}-${$app.stage}-origin-access-identity`,
@@ -86,7 +101,7 @@ export default $config({
         {
           originId: 'mainOriginGroup',
           failoverCriteria: {
-            statusCodes: [500, 502, 503, 504],
+            statusCodes: [500, 502, 503, 504, 404, 403],
           },
           members: [{ originId: 'S3Origin' }, { originId: 'LambdaOrigin' }],
         },
@@ -129,13 +144,13 @@ export default $config({
     }
 
     const api = new sst.aws.Function('Api', {
-      link: [bucket],
+      link: [uploadsBucket],
       handler: 'packages/functions/src/graphql/graphql.handler',
       url: true,
     })
 
     const ai = new sst.aws.Function('AiEndpoint', {
-      link: [bucket],
+      link: [uploadsBucket],
       permissions: [bedrockPermission],
       environment: {
         LANGCHAIN_TRACING_V2: 'true',
@@ -153,7 +168,7 @@ export default $config({
 
     const web = new sst.aws.Remix('Web', {
       path: 'packages/web',
-      link: [bucket, api, auth],
+      link: [uploadsBucket, api, auth],
     })
 
     return {

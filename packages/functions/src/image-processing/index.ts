@@ -4,8 +4,8 @@
 import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import Sharp, { FormatEnum } from "sharp";
 import { Watermark } from './watermark';
-import { logger } from "@rukuma/shared/logger";
-import { retry } from "@rukuma/shared/utils";
+import { logger } from "../../../shared/src/logger";
+import { retry } from "../../../shared/src/utils";
 
 const s3Client = new S3Client({
   maxAttempts: 3,
