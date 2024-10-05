@@ -79,7 +79,7 @@ export default $config({
       access: "cloudfront",
     });
     // Define imageResizer Lambda function
-    const imageResizer = new sst.aws.Function(`ImageResizer`, {
+    const imageResizer = new sst.aws.Function("ImageResizer", {
       handler: "packages/functions/src/image-processing/index.handler",
       url: true,
       live: false,

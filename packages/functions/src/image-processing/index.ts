@@ -96,9 +96,7 @@ export const handler = async (event: any) => {
 
 function validateRequest(event): boolean {
   return (
-    event.requestContext &&
-    event.requestContext.http &&
-    event.requestContext.http.method === "GET"
+    event.requestContext?.http && event.requestContext.http.method === "GET"
   );
 }
 
