@@ -1,215 +1,225 @@
-import { NeonClient } from "./client";
-import { Resource } from "sst";
+import { NeonClient } from './client'
+import type { Branch } from './types'
+import { logger } from '../../../../shared/src/logger'
 
-const NEON_API_KEY = Resource.NEON_API_KEY.value;
-const DATABASE_CONNECTION_URL = Resource.DATABASE_CONNECTION_URL.value;
-const STAGE = Resource.App.stage;
+class NeonDBUtils {
+  private readonly NEON_API_KEY: string
+  private readonly STAGE: string
+  private readonly ROLE_NAME: string = 'OndeVamos_owner'
+  private readonly DB_NAME: string = 'OndeVamos'
+  private readonly PROJECT_NAME: string = 'OndeDev'
+  private readonly MAX_RETRIES: number = 60
+  private readonly RETRY_DELAY: number = 10000 // 10 seconds
 
-const ROLE_NAME = "OndeVamos_owner";
-const DB_NAME = "OndeVamos";
-const PROJECT_NAME = "OndeDev";
-const MAX_RETRIES = 60;
-const RETRY_DELAY = 10000; // 10 seconds
+  private client: NeonClient
+  private logger: typeof logger
 
-export const getSourceBranchForStage = (stage: string) => {
-  if (stage === "prod") return "main";
-  if (stage === "staging" || stage === "dev") {
-    return "main";
+  constructor({
+    neonApiKey,
+    config: {
+      roleName,
+      dbName,
+      projectName,
+    },
+    stage,
+  }: { neonApiKey: string; stage: string; config: { roleName: string; dbName: string; projectName: string } }) {
+    this.NEON_API_KEY = neonApiKey
+    this.STAGE = stage
+    this.ROLE_NAME = roleName
+    this.DB_NAME = dbName
+    this.PROJECT_NAME = projectName
+    this.client = new NeonClient({ apiKey: this.NEON_API_KEY })
+    this.logger = logger
   }
-  // this includes pr branches and locals
-  return "dev";
-};
 
-export const getBranchNameForStage = (stage: string) => {
-  if (stage === "prod") return "main";
-  if (stage === "dev") return "dev";
-  if (stage.startsWith("pr")) {
-    return `ephemeral/${stage}`;
+  public getSourceBranchForStage(stage: string): string {
+    if (stage === 'prod') return 'main'
+    if (stage === 'staging' || stage === 'dev') {
+      return 'main'
+    }
+    // this includes pr branches and locals
+    return 'dev'
   }
-  return `dev/${stage}`;
-};
 
-const client = new NeonClient({ apiKey: NEON_API_KEY });
+  public getBranchNameForStage(stage: string): string {
+    if (stage === 'prod') return 'main'
+    if (stage === 'dev') return 'dev'
+    if (stage.startsWith('pr')) {
+      return `ephemeral/${stage}`
+    }
+    return `dev/${stage}`
+  }
 
-export const getProject = async () => {
-  const { projects } = await client.listProjects();
-  if (projects.length === 0) throw new Error("No projects found");
+  public async getProject() {
+    const { projects } = await this.client.listProjects()
+    if (projects.length === 0) throw new Error('No projects found')
 
-  console.log(`Getting project ${PROJECT_NAME}`);
-  const project = projects.find((project) => project.name === PROJECT_NAME);
-  if (!project) throw new Error(`Project ${PROJECT_NAME} not found`);
-  return project;
-};
+    console.log(`Getting project ${this.PROJECT_NAME}`)
+    const project = projects.find((project) => project.name === this.PROJECT_NAME)
+    if (!project) throw new Error(`Project ${this.PROJECT_NAME} not found`)
+    return project
+  }
 
-type CreateBranchOptions = {
+  private async createBranch(options: CreateBranchOptions): Promise<Branch> {
+    const { newBranchName, sourceBranchId, projectId } = options
+    console.log(`Creating branch because it does not exist: ${newBranchName}`)
+    return this.client.createBranch(projectId, {
+      endpoints: [
+        {
+          type: 'read_write',
+        },
+      ],
+      branch: {
+        name: newBranchName,
+        parent_id: sourceBranchId,
+      },
+    })
+  }
+
+  private async sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms))
+  }
+
+  public async waitForBranchReady(projectId: string, branchName: string): Promise<Branch> {
+    for (let i = 0; i < this.MAX_RETRIES; i++) {
+      console.log(
+        `Checking if branch ${branchName} is ready: (${i + 1}/${this.MAX_RETRIES} retries)`
+      )
+      const { branches } = await this.client.listBranches(projectId)
+      const branch = branches.find((b) => b.name === branchName && b.current_state === 'ready')
+
+      if (branch && branch.current_state === 'ready') {
+        return branch
+      }
+
+      await this.sleep(this.RETRY_DELAY)
+    }
+
+    throw new Error(
+      `Branch ${branchName} did not become ready within the expected time of ${(this.MAX_RETRIES * this.RETRY_DELAY) / 1000} seconds}`
+    )
+  }
+
+  public async getOrCreateBranch(
+    options: GetOrCreateBranchOptions = {
+      resetBranch: false,
+    }
+  ): Promise<Branch & { uri: string }> {
+    const { resetBranch } = options
+    const { id: projectId } = await this.getProject()
+
+    const sourceBranchName = this.getSourceBranchForStage(this.STAGE)
+    const targetBranchName = this.getBranchNameForStage(this.STAGE)
+
+    console.log(`Source Branch for stage ${this.STAGE}: ${sourceBranchName}`)
+    try {
+      console.log(`Getting or creating branch ${targetBranchName}`)
+      const { branches } = await this.client.listBranches(projectId)
+      if (branches.length === 0) throw new Error('No branches found')
+      const sourceBranch = branches.find((branch) => branch.name === sourceBranchName)
+
+      if (!sourceBranch) throw new Error(`Source branch ${sourceBranchName} found`)
+
+      // Get the branch
+      let targetBranch = branches.find((branch) => branch.name === targetBranchName)
+      // If not exist, we create it
+      if (!targetBranch) {
+        const createdBranch = await this.createBranch({
+          newBranchName: targetBranchName,
+          sourceBranchId: sourceBranch.id,
+          projectId,
+        })
+        console.log({ createdBranch })
+        targetBranch = await this.waitForBranchReady(projectId, targetBranchName)
+      } else {
+        console.info(`Error Creating the branch: ${targetBranchName}`)
+      }
+
+      // Reset branch
+      if (resetBranch && targetBranch) {
+        console.log(`Resetting Branch ${targetBranch.name} to its parent: ${sourceBranch.name}`)
+        try {
+          await this.client.restoreBranch(projectId, targetBranch.id, {
+            source_branch_id: sourceBranch.id,
+          })
+        } catch (err) {
+          console.error(err)
+          console.error(new Error(`Failure trying to restore branch ${targetBranch.name}`))
+        }
+      }
+
+      if (!targetBranch) {
+        throw new Error(`Target branch ${targetBranchName} not found`)
+      }
+
+      const { uri } = await this.client.getConnectionUri(projectId, {
+        branchId: targetBranch.id,
+        pooled: true,
+        databaseName: this.DB_NAME,
+        roleName: this.ROLE_NAME,
+      })
+
+      return { ...targetBranch, uri }
+    } catch (error) {
+      console.error('Error getting or creating branch', error)
+      throw error
+    }
+  }
+
+  public async getConnectionURIForBranch(branchName: string): Promise<string> {
+    const { id: projectId } = await this.getProject()
+    const { branches } = await this.client.listBranches(projectId)
+    const branch = branches.find((branch) => branch.name === branchName)
+    if (!branch) {
+      throw new Error(`Branch ${branchName} not found`)
+    }
+    const { uri } = await this.client.getConnectionUri(projectId, {
+      branchId: branch.id,
+      pooled: true,
+      databaseName: this.DB_NAME,
+      roleName: this.ROLE_NAME,
+    })
+
+    this.logger.info(`Using branch ${branchName}`)
+    return uri
+  }
+
+  public async getDatabaseString(): Promise<string> {
+    const branch = await this.getOrCreateBranch()
+    if (!branch) {
+      throw new Error('Branch not found')
+    }
+    const connectionString = branch.uri
+    console.log(`Using branch: ${branch.name}`)
+    return connectionString
+  }
+
+  public async deleteBranchByName(): Promise<string> {
+    const { id: projectId } = await this.getProject()
+
+    const branchName = this.getBranchNameForStage(this.STAGE)
+    const { branches } = await this.client.listBranches(projectId)
+    const filteredBranches = branches.filter((branch) => branch.name === branchName)
+    // TODO: Check whether this should not throw but instead it should be logged
+    // in case some stuff breaks
+    if (filteredBranches.length === 0)
+      throw new Error(`No branch found with the name ${branchName}`)
+
+    const [{ id: branchId }] = filteredBranches
+    await this.client.deleteBranch(projectId, branchId)
+    return `Branch ${branchName} deleted`
+  }
+}
+
+// Define interfaces
+interface CreateBranchOptions {
   newBranchName: string;
   sourceBranchId: string;
   projectId: string;
-};
-
-export const createBranch = async (options: CreateBranchOptions) => {
-  const { newBranchName, sourceBranchId, projectId } = options;
-  console.log(`Creating branch because it does not exist: ${newBranchName}`);
-  return client.createBranch(projectId, {
-    endpoints: [
-      {
-        type: "read_write",
-      },
-    ],
-    branch: {
-      name: newBranchName,
-      parent_id: sourceBranchId,
-    },
-  });
-};
+}
 
 interface GetOrCreateBranchOptions {
   resetBranch: boolean;
 }
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-export const waitForBranchReady = async (
-  projectId: string,
-  branchName: string,
-): Promise<Branch> => {
-  for (let i = 0; i < MAX_RETRIES; i++) {
-    console.log(
-      `Checking if branch ${branchName} is ready: (${i + 1}/${MAX_RETRIES} retries)`,
-    );
-    const { branches } = await client.listBranches(projectId);
-    const branch = branches.find(
-      (b) => b.name === branchName && b.current_state === "ready",
-    );
-
-    if (branch && branch.current_state === "ready") {
-      return branch;
-    }
-
-    await sleep(RETRY_DELAY);
-  }
-
-  throw new Error(
-    `Branch ${branchName} did not become ready within the expected time of ${(MAX_RETRIES * RETRY_DELAY) / 1000} seconds}`,
-  );
-};
-
-export const getOrCreateBranch = async (
-  options: GetOrCreateBranchOptions = {
-    resetBranch: false,
-  },
-): Promise<Branch & { uri: string }> => {
-  const { resetBranch } = options;
-  const { id: projectId } = await getProject();
-
-  const sourceBranchName = getSourceBranchForStage(STAGE);
-  const targetBranchName = getBranchNameForStage(STAGE);
-
-  console.log(`Source Branch for stage ${STAGE}: ${sourceBranchName}`);
-  try {
-    console.log(`Getting or creating branch ${targetBranchName}`);
-    const { branches } = await client.listBranches(projectId);
-    if (branches.length === 0) throw new Error("No branches found");
-    const sourceBranch = branches.find(
-      (branch) => branch.name === sourceBranchName,
-    );
-
-    if (!sourceBranch)
-      throw new Error(`Source branch ${sourceBranchName} found`);
-
-    // Get the branch
-    let targetBranch = branches.find(
-      (branch) => branch.name === targetBranchName,
-    );
-    // If not exist, we create it
-    if (!targetBranch) {
-      const createdBranch = await createBranch({
-        newBranchName: targetBranchName,
-        sourceBranchId: sourceBranch.id,
-        projectId,
-      });
-      console.log({ createdBranch });
-      targetBranch = await waitForBranchReady(projectId, targetBranchName);
-    } else {
-      console.info(`Error Creating the branch: ${targetBranchName}`);
-    }
-
-    // Reset branch
-    if (resetBranch) {
-      console.log(
-        `Resetting Branch ${targetBranch.name} to its parent: ${sourceBranch.name}`,
-      );
-      try {
-        await client.restoreBranch(projectId, targetBranch.id, {
-          source_branch_id: sourceBranch.id,
-        });
-      } catch (err) {
-        console.error(err);
-        console.error(
-          new Error(`Failure trying to restore branch ${targetBranch.name}`),
-        );
-      }
-    }
-    const { uri } = await client.getConnectionUri(projectId, {
-      branchId: targetBranch.id,
-      pooled: true,
-      databaseName: DB_NAME,
-      roleName: ROLE_NAME,
-    });
-
-    return { ...targetBranch, uri };
-  } catch (error) {
-    console.error("Error getting or creating branch", error);
-    throw error;
-  }
-};
-
-export const getConnectionURIForBranch = async (branchName: string) => {
-  const { id: projectId } = await getProject();
-  const { branches } = await client.listBranches(projectId);
-  const branch = branches.find((branch) => branch.name === branchName);
-  if (!branch) {
-    throw new Error(`Branch ${branchName} not found`);
-  }
-  const { uri } = await client.getConnectionUri(projectId, {
-    branchId: branch.id,
-    pooled: true,
-    databaseName: DB_NAME,
-    roleName: ROLE_NAME,
-  });
-
-  logger.info(`Using branch ${branchName}`);
-  return uri;
-};
-
-export const getDatabaseString = async () => {
-  // If we are in a PR stage, or in local we should use a branch, otherwise, the environment branch works fine
-  if (STAGE === "production" || STAGE === "staging" || STAGE === "dev") {
-    return DATABASE_CONNECTION_URL;
-  }
-  const branch = await getOrCreateBranch();
-  if (!branch) {
-    throw new Error("Branch not found");
-  }
-  const connectionString = branch.uri;
-  console.log(`Using branch: ${branch.name}`);
-  return connectionString;
-};
-
-export const deleteBranchByName = async () => {
-  const { id: projectId } = await getProject();
-
-  const branchName = getBranchNameForStage(STAGE);
-  const { branches } = await client.listBranches(projectId);
-  const filteredBranches = branches.filter(
-    (branch) => branch.name === branchName,
-  );
-  // TODO: Check whether this should not throw but instead it should be logged
-  // in case some stuff breaks
-  if (filteredBranches.length === 0)
-    throw new Error(`No branch found with the name ${branchName}`);
-
-  const [{ id: branchId }] = filteredBranches;
-  await client.deleteBranch(projectId, branchId);
-  return `Branch ${branchName} deleted`;
-};
+export default NeonDBUtils;

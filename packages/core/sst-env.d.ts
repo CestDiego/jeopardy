@@ -20,9 +20,9 @@ declare module "sst" {
       "type": "sst.aws.Function"
       "url": string
     }
-    "DATABASE_CONNECTION_URL": {
-      "type": "sst.sst.Secret"
-      "value": string
+    "DATABASE_CONNECTIONS": {
+      "primary": string
+      "replicas": any
     }
     "ImageResizer": {
       "name": string
