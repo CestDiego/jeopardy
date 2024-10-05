@@ -39,7 +39,7 @@ export default $config({
 
     const secrets = createSecrets(['NEON_API_KEY', 'DATABASE_CONNECTION_URL'])
 
-    // const branch = await getOrCreateBranch()
+    const branch = await getOrCreateBranch()
     console.log({ branch }, 'Branch from Neon')
 
     new sst.x.DevCommand('GraphQL', {
