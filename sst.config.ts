@@ -47,10 +47,11 @@ export default $config({
     const imageResizer = new sst.aws.Function(`ImageResizer`, {
       handler: "packages/functions/src/image-processing/index.handler",
       url: true,
+      live: false,
       nodejs: {
         install: ["sharp"],
       },
-      memory: "2500 MB",
+      memory: "1500 MB",
       logging: {
         retention: "1 day",
       },
