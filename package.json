@@ -5,6 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "update:packages": "pnpm up -i -r --latest",
     "check:biome": "pnpm biome check",
     "check:tsc": "pnpm run --no-bail --workspace-concurrency 6 -r typecheck",
     "dev": "sst dev",
