@@ -31,6 +31,7 @@
     "@lucia-auth/adapter-drizzle": "^1.1.0",
     "@pothos/core": "^4.2.0",
     "@rukuma/core": "workspace:",
+    "@rukuma/shared": "workspace:",
     "arctic": "^1.9.2",
     "graphql-yoga": "^5.7.0",
     "hono": "^4.6.3",
