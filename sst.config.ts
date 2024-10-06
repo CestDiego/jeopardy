@@ -27,6 +27,14 @@ export default $config({
       args.architecture = "arm64";
     });
 
+    new sst.x.DevCommand("GraphQL", {
+      dev: {
+        command: "pnpm run generate:watch",
+        directory: "packages/graphql",
+        autostart: true,
+      },
+    });
+
     const outputs = {};
     for (const value of fs.readdirSync("./infra/")) {
       const result = await import(`./infra/${value}`);
