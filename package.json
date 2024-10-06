@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "check:biome": "pnpm biome check",
-    "check:tsc": "pnpm run --no-bail -r typecheck",
+    "check:tsc": "pnpm run --no-bail --workspace-concurrency 6 -r typecheck",
     "dev": "sst dev",
     "deploy": "sst deploy",
     "sso": "aws sso login --sso-session=onde-vamos"

@@ -1,5 +1,5 @@
 {
-  "name": "@rukuma/web",
+  "name": "@rukuma/www",
   "private": true,
   "sideEffects": false,
   "type": "module",

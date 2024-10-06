@@ -253,7 +253,7 @@ export default $config({
       url: true,
     });
     const web = new sst.aws.Remix("Web", {
-      path: "apps/web",
+      path: "apps/www",
       link: [uploadsBucket, api, auth],
     });
     return {
