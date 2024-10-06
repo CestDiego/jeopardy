@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "generate": "graphql-codegen",
-    "generate:watch": "graphql-codegen --watch"
+    "generate:watch": "chokidar \"../functions/src/graphql/**/*.ts\" --initial -c graphql-codegen"
   },
   "dependencies": {
     "graphql": "^16.9.0",
@@ -16,8 +16,8 @@
     "@genql/cli": "^6.3.2",
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/schema-ast": "^4.1.0",
-    "@parcel/watcher": "^2.4.1",
     "@types/react": "^18.3.11",
+    "chokidar-cli": "^3.0.0",
     "type-fest": "^4.26.1",
     "typescript": "^5.6.2"
   }
