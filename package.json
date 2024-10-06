@@ -17,7 +17,7 @@
   "dependencies": {
     "@pulumi/aws": "^6.54.2",
     "@pulumi/pulumi": "^3.135.1",
-    "sst": "3.1.65"
+    "sst": "3.1.67"
   },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
