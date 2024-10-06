@@ -1,5 +1,5 @@
-import { ApiError } from "@rukuma/core/errors.js";
-import { logger } from "@rukuma/core/logger.js";
+import { ApiError } from "@rukuma/core/errors";
+import { logger } from "@rukuma/core/logger";
 import { Hono } from "hono";
 import { logger as honoLogger } from "hono/logger";
 import { prettyJSON } from "hono/pretty-json";
@@ -30,16 +30,6 @@ app.onError((error, c) => {
 
 app.get("/test", async (c) => {
   return c.json({ message: "Hello, World!" });
-});
-
-app.put("/*", async (c) => {
-  const key = crypto.randomUUID();
-  await Resource.RukumaBucket.put(key, c.req.raw.body, {
-    httpMetadata: {
-      contentType: c.req.header("content-type"),
-    },
-  });
-  return new Response(`Object created with key: ${key}`);
 });
 
 export default app;
