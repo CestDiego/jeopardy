@@ -1,5 +1,5 @@
 import { DrizzlePostgreSQLAdapter } from "@lucia-auth/adapter-drizzle";
-import { GitHub, Google } from "arctic";
+import { Google } from "arctic";
 import { Lucia } from "lucia";
 import { db } from "#db";
 import { sessionTable, userTable } from "#schema";

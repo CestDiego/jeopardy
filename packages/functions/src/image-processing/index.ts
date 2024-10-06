@@ -6,10 +6,10 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
+import { logger } from "@rukuma/shared/logger";
+import { retry } from "@rukuma/shared/utils";
 import type { APIGatewayProxyEventV2 } from "aws-lambda";
 import Sharp, { type FormatEnum } from "sharp";
-import { logger } from "../../../shared/src/logger";
-import { retry } from "../../../shared/src/utils";
 import { Watermark } from "./watermark";
 
 const s3Client = new S3Client({

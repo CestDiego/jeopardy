@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { runScript } from "./index";
 
-vi.mock("@onde-vamos/shared/utils", () => ({
+vi.mock("@rukuma/shared/utils", () => ({
   isPRStage: vi.fn(),
 }));
 
@@ -51,7 +51,7 @@ describe("Script", () => {
 
   it("should return the result of getOrCreateBranch when the function is 'prepare-pr-branch' and isPRStage returns true", async () => {
     const { getOrCreateBranch } = await import("./utils");
-    const { isPRStage } = await import("@onde-vamos/shared/utils");
+    const { isPRStage } = await import("@rukuma/shared/utils");
     getOrCreateBranch.mockResolvedValueOnce({
       id: "mocked-id",
       name: "Mocked branch",
@@ -70,7 +70,7 @@ describe("Script", () => {
 
   it("should return a resolved promise with a specific message when the function is 'prepare-pr-branch' and isPRStage returns false", async () => {
     const { getOrCreateBranch } = await import("./utils");
-    const { isPRStage } = await import("@onde-vamos/shared/utils");
+    const { isPRStage } = await import("@rukuma/shared/utils");
     isPRStage.mockReturnValueOnce(false);
     const result = await runScript("prepare-pr-branch");
     expect(isPRStage).toHaveBeenCalled();

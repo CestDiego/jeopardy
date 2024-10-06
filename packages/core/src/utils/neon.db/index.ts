@@ -1,5 +1,5 @@
 // index.ts
-import { isPRStage } from "@onde-vamos/shared/utils";
+import { isPRStage } from "@rukuma/shared/utils";
 import { deleteBranchByName, getOrCreateBranch } from "./utils";
 
 export async function runScript(functionToExecute: string) {
