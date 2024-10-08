@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    /* Base Options: */
     "esModuleInterop": true,
     "skipLibCheck": true,
     "target": "ES2023",
@@ -9,15 +8,12 @@
     "moduleDetection": "force",
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
-    /* Strictness */
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
-    /* If NOT transpiling with TypeScript: */
     "module": "preserve",
     "moduleResolution": "Bundler",
     "noEmit": true,
-    /* If your code doesn't run in the DOM: */
     "lib": ["ES2023"]
   }
 }
