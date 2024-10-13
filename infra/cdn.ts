@@ -2,6 +2,9 @@ import * as fs from "node:fs";
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
 import { getOriginShieldRegion } from "../packages/shared/src/origin-shield";
+import { DomainManager } from "../packages/shared/src/DomainManager";
+
+const domainManager = DomainManager.fromSst($app);
 
 const DOMAIN_NAME = "rukuma.marcawasi.com";
 
@@ -63,10 +66,7 @@ const responseHeadersPolicy = new aws.cloudfront.ResponseHeadersPolicy(
 );
 const cdn = new sst.aws.Cdn("ContentDeliveryNetwork", {
   domain: {
-    name:
-      $app.stage === "production"
-        ? `${DOMAIN_NAME}`
-        : `cdn.${$app.stage}.${DOMAIN_NAME}`,
+    name: domainManager.getDomain("cdn"),
   },
   origins: [
     {

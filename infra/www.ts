@@ -1,10 +1,16 @@
 import { api, auth } from "./api";
 import { uploadsBucket } from "./cdn";
 import { ai } from "./ai";
+import { DomainManager } from "../packages/shared/src/DomainManager";
+
+const domainManager = DomainManager.fromSst($app);
 
 const web = new sst.aws.Remix("Web", {
   path: "apps/www",
   link: [uploadsBucket, api, auth, ai],
+  domain: {
+    name: domainManager.getDomain("web"),
+  },
   environment: {
     AI_URL: ai.url,
     API_URL: api.url,
