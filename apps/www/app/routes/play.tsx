@@ -4,15 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Volume2, VolumeX } from 'lucide-react';
-
-const questions = [
-  { text: "What's a childhood memory that still makes you smile?", depth: "Light" },
-  { text: "If you could master one skill instantly, what would it be and why?", depth: "Medium" },
-  { text: "What's the most significant way in which you've grown as a person in the last year?", depth: "Deep" },
-  { text: "If you could have dinner with any historical figure, who would it be and why?", depth: "Medium" },
-  { text: "What's a belief you held strongly in the past that you've since changed your mind about?", depth: "Deep" },
-  // Add more questions here...
-];
+import { questions, type Depth } from '@/lib/questions';
 
 const DeepConversationCardsMVP = () => {
   const [currentQuestion, setCurrentQuestion] = useState('');
