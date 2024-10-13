@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Volume2, VolumeX } from 'lucide-react';
 import { questions, type Depth } from '@/lib/questions';
+import { useElevenLabsSpeech } from '@/hooks/useElevenLabsSpeech';
 
 const DeepConversationCardsMVP = () => {
   const [currentQuestion, setCurrentQuestion] = useState('');
@@ -12,10 +13,25 @@ const DeepConversationCardsMVP = () => {
   const [isIncognito, setIsIncognito] = useState(false);
   const [isSpeechEnabled, setIsSpeechEnabled] = useState(false);
   const [sessionDuration, setSessionDuration] = useState(5); // Default to 5 minutes
-  const [preferredDepth, setPreferredDepth] = useState('Medium');
+  const [preferredDepth, setPreferredDepth] = useState<Depth>('Medium');
+  const { speak, isLoading, error } = useElevenLabsSpeech();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     getRandomQuestion();
+
+    // Initialize and play background music
+    audioRef.current = new Audio('/background-music.ogg');
+    audioRef.current.loop = true;
+    audioRef.current.play();
+
+    // Cleanup function to stop the music when component unmounts
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -37,13 +53,6 @@ const DeepConversationCardsMVP = () => {
   const startSession = () => {
     setTimeRemaining(sessionDuration * 60);
     getRandomQuestion();
-  };
-
-  const speak = (text) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      window.speechSynthesis.speak(utterance);
-    }
   };
 
   const toggleSpeech = () => {
@@ -75,8 +84,8 @@ const DeepConversationCardsMVP = () => {
             <Switch checked={isIncognito} onCheckedChange={setIsIncognito} />
           </div>
           <div className="flex justify-between items-center mb-4">
-            <span>Voice Narration</span>
-            <Button variant="ghost" size="icon" onClick={toggleSpeech}>
+            <span>Voice Narration (Eleven Labs)</span>
+            <Button variant="ghost" size="icon" onClick={toggleSpeech} disabled={isLoading}>
               {isSpeechEnabled ? <Volume2 /> : <VolumeX />}
             </Button>
           </div>
@@ -99,6 +108,7 @@ const DeepConversationCardsMVP = () => {
               <SelectItem value="Deep">Deep</SelectItem>
             </SelectContent>
           </Select>
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
         </CardContent>
       </Card>
     </div>

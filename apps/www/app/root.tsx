@@ -1,10 +1,18 @@
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
 import styles from "./tailwind.css?url";
+import { getEnv } from "./lib/env";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: styles },
 ];
+
+export const loader: LoaderFunction = async () => {
+  return json({
+    ENV: getEnv(),
+  });
+};
 
 export default function App() {
   return (
@@ -19,6 +27,12 @@ export default function App() {
         <Outlet />
         <ScrollRestoration />
         <Scripts />
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: Only way to set env for client-side code
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(getEnv())};`,
+          }}
+        />
       </body>
     </html>
   );

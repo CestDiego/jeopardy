@@ -28,6 +28,14 @@ declare module "sst" {
       "primary": string
       "replicas": any
     }
+    "ELEVEN_LABS_API_KEY": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
+    "ELEVEN_LABS_VOICE_ID": {
+      "type": "sst.sst.Secret"
+      "value": string
+    }
     "ImageResizer": {
       "name": string
       "type": "sst.aws.Function"

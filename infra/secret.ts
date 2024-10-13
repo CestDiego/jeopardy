@@ -7,4 +7,8 @@ const createSecrets = <T extends string>(secrets: T[]) =>
     {} as Record<T, sst.Secret>,
   );
 
-export const allSecrets = createSecrets(["NEON_API_KEY"]);
+export const allSecrets = createSecrets([
+  "NEON_API_KEY",
+  "ELEVEN_LABS_API_KEY",
+  "ELEVEN_LABS_VOICE_ID",
+]);
