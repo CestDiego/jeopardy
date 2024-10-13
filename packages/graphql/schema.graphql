@@ -1,12 +1,23 @@
-type Data {
-  red: String
-  response: String
+type Batch {
+  error: String
+  id: ID
+  results: String
+  status: String
+}
+
+input BatchParametersInput {
+  model: String
+  temperature: Float
+}
+
+type CreateBatchPayload {
+  batchId: ID
 }
 
 type Mutation {
-  submitStuff: Data
+  createBatch(batchSize: Int!, fileUrl: String!, parameters: BatchParametersInput): CreateBatchPayload
 }
 
 type Query {
-  clients: Data
+  batch(id: ID!): Batch
 }

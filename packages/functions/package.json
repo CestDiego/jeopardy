@@ -23,19 +23,19 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.145",
-    "@types/node": "^22.7.4"
+    "@types/node": "^22.7.5"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.665.0",
+    "@aws-sdk/client-s3": "^3.670.0",
     "@hono/zod-validator": "^0.4.1",
     "@lucia-auth/adapter-drizzle": "^1.1.0",
-    "@pothos/core": "^4.2.0",
+    "@pothos/core": "^4.3.0",
     "@rukuma/core": "workspace:",
     "@rukuma/shared": "workspace:",
     "arctic": "^1.9.2",
     "graphql-yoga": "^5.7.0",
-    "hono": "^4.6.3",
-    "lucia": "^3.2.0",
+    "hono": "^4.6.4",
+    "lucia": "^3.2.1",
     "sharp": "^0.33.5",
     "zod": "^3.23.8"
   }

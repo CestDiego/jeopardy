@@ -34,19 +34,19 @@
     "./*": "./src/*.ts"
   },
   "devDependencies": {
-    "@types/node": "^22.7.4",
+    "@types/node": "^22.7.5",
     "drizzle-kit": "^0.24.2",
     "vitest": "^2.1.2"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.665.0",
-    "@aws-sdk/s3-request-presigner": "^3.665.0",
-    "@langchain/community": "^0.3.4",
-    "@langchain/core": "^0.3.7",
+    "@aws-sdk/client-s3": "^3.670.0",
+    "@aws-sdk/s3-request-presigner": "^3.670.0",
+    "@langchain/community": "^0.3.5",
+    "@langchain/core": "^0.3.10",
     "@neondatabase/serverless": "^0.9.5",
     "drizzle-orm": "^0.33.0",
     "drizzle-zod": "^0.5.1",
-    "hono": "^4.6.3",
+    "hono": "^4.6.4",
     "pino": "^9.4.0",
     "ts-custom-error": "^3.3.1",
     "ulid": "^2.3.0",

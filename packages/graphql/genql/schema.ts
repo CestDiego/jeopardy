@@ -5,49 +5,77 @@
 
 export type Scalars = {
     String: string,
+    ID: string,
+    Float: number,
+    Int: number,
     Boolean: boolean,
 }
 
-export interface Data {
-    red: (Scalars['String'] | null)
-    response: (Scalars['String'] | null)
-    __typename: 'Data'
+export interface Batch {
+    error: (Scalars['String'] | null)
+    id: (Scalars['ID'] | null)
+    results: (Scalars['String'] | null)
+    status: (Scalars['String'] | null)
+    __typename: 'Batch'
+}
+
+export interface CreateBatchPayload {
+    batchId: (Scalars['ID'] | null)
+    __typename: 'CreateBatchPayload'
 }
 
 export interface Mutation {
-    submitStuff: (Data | null)
+    createBatch: (CreateBatchPayload | null)
     __typename: 'Mutation'
 }
 
 export interface Query {
-    clients: (Data | null)
+    batch: (Batch | null)
     __typename: 'Query'
 }
 
-export interface DataGenqlSelection{
-    red?: boolean | number
-    response?: boolean | number
+export interface BatchGenqlSelection{
+    error?: boolean | number
+    id?: boolean | number
+    results?: boolean | number
+    status?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface BatchParametersInput {model?: (Scalars['String'] | null),temperature?: (Scalars['Float'] | null)}
+
+export interface CreateBatchPayloadGenqlSelection{
+    batchId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
 export interface MutationGenqlSelection{
-    submitStuff?: DataGenqlSelection
+    createBatch?: (CreateBatchPayloadGenqlSelection & { __args: {batchSize: Scalars['Int'], fileUrl: Scalars['String'], parameters?: (BatchParametersInput | null)} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
 export interface QueryGenqlSelection{
-    clients?: DataGenqlSelection
+    batch?: (BatchGenqlSelection & { __args: {id: Scalars['ID']} })
     __typename?: boolean | number
     __scalar?: boolean | number
 }
 
 
-    const Data_possibleTypes: string[] = ['Data']
-    export const isData = (obj?: { __typename?: any } | null): obj is Data => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isData"')
-      return Data_possibleTypes.includes(obj.__typename)
+    const Batch_possibleTypes: string[] = ['Batch']
+    export const isBatch = (obj?: { __typename?: any } | null): obj is Batch => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isBatch"')
+      return Batch_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CreateBatchPayload_possibleTypes: string[] = ['CreateBatchPayload']
+    export const isCreateBatchPayload = (obj?: { __typename?: any } | null): obj is CreateBatchPayload => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCreateBatchPayload"')
+      return CreateBatchPayload_possibleTypes.includes(obj.__typename)
     }
     
 

@@ -20,10 +20,6 @@ declare module "sst" {
       "type": "sst.aws.Function"
       "url": string
     }
-    "BadBatchWeb": {
-      "type": "sst.aws.Remix"
-      "url": string
-    }
     "Bucket": {
       "name": string
       "type": "sst.aws.Bucket"

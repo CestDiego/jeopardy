@@ -16,18 +16,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pulumi/aws": "^6.54.2",
-    "@pulumi/pulumi": "^3.135.1",
+    "@pulumi/aws": "^6.55.0",
+    "@pulumi/pulumi": "^3.136.1",
     "sst": "3.1.67"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
     "@tsconfig/node20": "^20.1.4",
-    "@types/node": "^22.7.4",
+    "@types/node": "^22.7.5",
     "chalk": "^5.3.0",
     "chokidar": "^4.0.1",
     "graphql": "^16.8.1",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.3"
   },
   "packageManager": "pnpm@9.7.1+sha512.faf344af2d6ca65c4c5c8c2224ea77a81a5e8859cbc4e06b1511ddce2f0151512431dd19e6aff31f2c6a8f5f2aced9bd2273e1fed7dd4de1868984059d2c4247"
 }
