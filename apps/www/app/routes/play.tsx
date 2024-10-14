@@ -12,6 +12,7 @@ import {
 import { Volume2, VolumeX } from "lucide-react";
 import { questions, type Depth } from "@/lib/questions";
 import { useElevenLabsSpeech } from "@/hooks/useElevenLabsSpeech";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const BackgroundVideo = React.memo(({ isPlaying }: { isPlaying: boolean }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -29,14 +30,14 @@ const BackgroundVideo = React.memo(({ isPlaying }: { isPlaying: boolean }) => {
   }, [isPlaying]);
 
   return (
-    <div className="absolute top-0 right-0 h-full w-full bg-black">
+    <div className="absolute top-0 right-0 h-full w-full bg-black overflow-hidden flex items-center justify-center">
       {isPlaying && (
         <video
           ref={videoRef}
           loop
           muted
           playsInline
-          className="w-full h-full object-cover"
+          className="w-full h-auto max-h-full object-contain"
         >
           <source src="/background-video.mp4" type="video/mp4" />
           Your browser does not support the video tag.
@@ -84,6 +85,7 @@ const DeepConversationCardsMVP = () => {
   const [preferredDepth, setPreferredDepth] = useState<Depth>("Medium");
   const { speak, isLoading, error } = useElevenLabsSpeech();
   const [isSessionActive, setIsSessionActive] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   useEffect(() => {
     if (timeRemaining > 0) {
@@ -123,14 +125,23 @@ const DeepConversationCardsMVP = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
-      <div className="w-1/3 bg-gradient-to-l from-black to-purple-900 p-8 flex flex-col justify-center">
-        <div className="max-w-md mx-auto">
-          <h1 className="text-3xl font-bold mb-8 text-center text-white">
+    <div className={`flex min-h-screen ${isDesktop ? "flex-row" : "flex-col"}`}>
+      <div
+        className={`
+        ${
+          isDesktop
+            ? "w-1/2 bg-gradient-to-l from-black to-indigo-900"
+            : "w-full bg-gradient-to-b from-indigo-900 via-blue-800 to-blue-900 flex-grow flex items-center"
+        } 
+        p-4 md:p-8 flex flex-col justify-center
+      `}
+      >
+        <div className="max-w-md mx-auto w-full">
+          <h1 className="text-2xl md:text-3xl font-bold mb-4 md:mb-8 text-center text-white">
             Deep Conversation Cards
           </h1>
-          <Card className="w-full mb-4 bg-purple-800/50 text-white backdrop-blur-sm">
-            <CardContent className="p-6">
+          <Card className="w-full mb-4 bg-purple-800/50 text-white backdrop-blur-sm border-0">
+            <CardContent className="p-4 md:p-6">
               <p className="text-xl text-center mb-6">
                 {currentQuestion || "Click 'Start Session' to begin"}
               </p>
@@ -198,9 +209,11 @@ const DeepConversationCardsMVP = () => {
           </Card>
         </div>
       </div>
-      <div className="relative w-2/3">
-        <BackgroundVideo isPlaying={isSessionActive} />
-      </div>
+      {isDesktop && (
+        <div className="relative w-1/2">
+          <BackgroundVideo isPlaying={isSessionActive} />
+        </div>
+      )}
       <BackgroundAudio isPlaying={isSessionActive} />
     </div>
   );
