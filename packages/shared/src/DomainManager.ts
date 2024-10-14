@@ -30,8 +30,7 @@ const defaultConfig: DomainConfig = {
     [STACK_NAMES.WEB]: "{stage}",
   },
   localPorts: {
-    [STACK_NAMES.API]: 4000,
-    [STACK_NAMES.WEB]: 5173,  // Vite's default port
+    [STACK_NAMES.WEB]: 5173,
   },
 };
 
@@ -49,32 +48,32 @@ export class DomainManager {
   private isPersonalStage(): boolean {
     return (
       this.stage !== "dev" &&
-      this.stage !== "production" &&
+      this.stage !== "prod" &&
       !this.stage.match(/^pr\d+$/)
     );
   }
 
   getDomain(stackName: StackName): string {
-    if (this.stage === "local") {
+    const baseDomain = this.config.baseDomain;
+    let subdomain = '';
+
+    if (this.stage === "prod") {
+      // For the production stage, use a clean subdomain like 'cdn.baseDomain'
+      subdomain = stackName;
+    } else if (this.isPersonalStage()) {
+      // For personal stages, handle local development and domain patterns
       const localPort = this.config.localPorts?.[stackName];
       if (localPort) {
-        return `localhost:${localPort}`;
+        subdomain = `localhost:${localPort}`;
+      } else {
+        subdomain = `${stackName}.${this.stage}.dev`;
       }
-      // If no local port is specified, fall back to the regular domain generation
+    } else {
+      // For other stages like 'dev' or 'pr123', use the default pattern
+      subdomain = `${stackName}.${this.stage}`;
     }
 
-    const pattern = this.config.subdomainPatterns[stackName];
-    let subdomain = pattern.replace("{stage}", this.stage);
-
-    if (this.isPersonalStage()) {
-      subdomain = `${this.stage}.${subdomain}`;
-    }
-
-    if (this.stage === "production") {
-      subdomain = subdomain.replace(/^[^.]+\./, "");
-    }
-
-    return `${subdomain}.${this.config.baseDomain}`.replace(/^\./, "");
+    return `${subdomain}.${baseDomain}`.replace(/^\./, "");
   }
 
   getAllDomains(): Record<StackName, string> {

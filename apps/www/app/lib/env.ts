@@ -5,7 +5,7 @@ const EnvSchema = z.object({
   ELEVEN_LABS_VOICE_ID: z.string().default('uYtP7YTp6um0C03KbkWr'), // Kwame for story telling
   AI_URL: z.string(),
   API_URL: z.string(),
-  AUTH_URL: z.string(),
+//   AUTH_URL: z.string(),
 });
 
 // Validate and parse the environment variables
