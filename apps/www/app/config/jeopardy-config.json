@@ -1,0 +1,251 @@
+{
+  "gameSettings": {
+    "players": {
+      "defaults": [
+        {
+          "name": "Dumi",
+          "color": "#FF4136"
+        },
+        {
+          "name": "Naledi",
+          "color": "#2ECC40"
+        },
+        {
+          "name": "CJ",
+          "color": "#0074D9"
+        },
+        {
+          "name": "Deliwe",
+          "color": "#B10DC9"
+        },
+        {
+          "name": "Diego",
+          "color": "#FF851B"
+        }
+      ]
+    },
+    "rounds": {
+      "first": {
+        "pointValues": [200, 400, 600, 800, 1000]
+      },
+      "double": {
+        "pointValues": [400, 800, 1200, 1600, 2000]
+      },
+      "final": {
+        "pointValues": [2000]
+      }
+    }
+  },
+  "defaultCategories": {
+    "money": {
+      "name": "Mo' Money Mo' Drama",
+      "questions": [
+        {
+          "question": "This 1994 East Coast vs West Coast rivalry began after Tupac was shot at this NYC recording studio",
+          "answer": "What is Quad Studios?",
+          "value": 200,
+          "category": "money"
+        },
+        {
+          "question": "This Bad Boy Records producer was known for his signature shiny suits in music videos",
+          "answer": "Who is Puff Daddy/P. Diddy?",
+          "value": 400,
+          "category": "money"
+        },
+        {
+          "question": "This record label was founded by Dr. Dre and Suge Knight in 1991",
+          "answer": "What is Death Row Records?",
+          "value": 600,
+          "category": "money"
+        },
+        {
+          "question": "This rapper's 1995 Source Awards speech sparked the East Coast-West Coast rivalry",
+          "answer": "Who is Suge Knight?",
+          "value": 800,
+          "category": "money"
+        },
+        {
+          "question": "This 1997 tribute song by Puff Daddy & Faith Evans spent 11 weeks at #1",
+          "answer": "What is 'I'll Be Missing You'?",
+          "value": 1000,
+          "category": "money"
+        }
+      ]
+    },
+    "yugioh": {
+      "name": "Yu-Gi-Oh My!",
+      "questions": [
+        {
+          "question": "This Number card belonged to Yuma Tsukumo and was his signature monster",
+          "answer": "What is Number 39: Utopia?",
+          "value": 200,
+          "category": "yugioh"
+        },
+        {
+          "question": "This character was Yuma's spiritual partner and helped him with duels",
+          "answer": "Who is Astral?",
+          "value": 400,
+          "category": "yugioh"
+        },
+        {
+          "question": "This type of card was introduced in Zexal and requires overlay units",
+          "answer": "What are Xyz monsters?",
+          "value": 600,
+          "category": "yugioh"
+        },
+        {
+          "question": "This special summoning method was introduced in Zexal and requires 2 monsters of the same level",
+          "answer": "What is Xyz Summoning?",
+          "value": 800,
+          "category": "yugioh"
+        },
+        {
+          "question": "This final villain of Yu-Gi-Oh! Zexal wanted to destroy Astral World",
+          "answer": "Who is Don Thousand?",
+          "value": 1000,
+          "category": "yugioh"
+        }
+      ]
+    },
+    "sonic": {
+      "name": "Gotta Go Fast Facts",
+      "questions": [
+        {
+          "question": "This red echidna guards the Master Emerald and was originally Sonic's enemy",
+          "answer": "Who is Knuckles?",
+          "value": 200,
+          "category": "sonic"
+        },
+        {
+          "question": "This two-tailed fox is Sonic's best friend and can fly by spinning his tails",
+          "answer": "Who is Miles 'Tails' Prower?",
+          "value": 400,
+          "category": "sonic"
+        },
+        {
+          "question": "This robot creator is the main antagonist of the Sonic series",
+          "answer": "Who is Dr. Robotnik/Dr. Eggman?",
+          "value": 600,
+          "category": "sonic"
+        },
+        {
+          "question": "This liquid-based creature was the main antagonist in Sonic Adventure",
+          "answer": "Who is Chaos?",
+          "value": 800,
+          "category": "sonic"
+        },
+        {
+          "question": "This black hedgehog was created as the 'Ultimate Life Form'",
+          "answer": "Who is Shadow?",
+          "value": 1000,
+          "category": "sonic"
+        }
+      ]
+    },
+    "lost": {
+      "name": "Lost in Translation",
+      "questions": [
+        {
+          "question": "This Japanese word means 'empty orchestra' and refers to singing along to music",
+          "answer": "What is karaoke?",
+          "value": 200,
+          "category": "lost"
+        },
+        {
+          "question": "This German word literally means 'harm joy' and describes feeling pleasure at others' misfortune",
+          "answer": "What is schadenfreude?",
+          "value": 400,
+          "category": "lost"
+        },
+        {
+          "question": "This Japanese concept refers to finding beauty in imperfection",
+          "answer": "What is wabi-sabi?",
+          "value": 600,
+          "category": "lost"
+        },
+        {
+          "question": "This French phrase meaning 'already seen' describes the feeling of having experienced something before",
+          "answer": "What is déjà vu?",
+          "value": 800,
+          "category": "lost"
+        },
+        {
+          "question": "This Portuguese word describes a deep emotional state of nostalgic longing",
+          "answer": "What is saudade?",
+          "value": 1000,
+          "category": "lost"
+        }
+      ]
+    },
+    "visa": {
+      "name": "Love Knows No Visa",
+      "questions": [
+        {
+          "question": "This is the time limit couples have to get married once the foreign partner arrives in the US",
+          "answer": "What is 90 days?",
+          "value": 200,
+          "category": "visa"
+        },
+        {
+          "question": "Big Ed became famous for putting this condiment in his hair before meeting Rose",
+          "answer": "What is mayonnaise?",
+          "value": 400,
+          "category": "visa"
+        },
+        {
+          "question": "This country is where Usman 'Sojaboy' Umar, known for his song 'I love you', is from",
+          "answer": "What is Nigeria?",
+          "value": 600,
+          "category": "visa"
+        },
+        {
+          "question": "This Tunisian man's catchphrase 'I work so mach work' became a fan favorite",
+          "answer": "Who is Zied?",
+          "value": 800,
+          "category": "visa"
+        },
+        {
+          "question": "This type of visa is required for foreign fiancés to enter the US",
+          "answer": "What is a K-1 visa?",
+          "value": 1000,
+          "category": "visa"
+        }
+      ]
+    },
+    "anime": {
+      "name": "Anime Trivia",
+      "questions": [
+        {
+          "question": "This ninja's catchphrase is 'Believe it!' in the English dub of Naruto",
+          "answer": "Who is Naruto Uzumaki?",
+          "value": 200,
+          "category": "anime"
+        },
+        {
+          "question": "This Death Note character is known for sitting peculiarly and having a sweet tooth",
+          "answer": "Who is L?",
+          "value": 400,
+          "category": "anime"
+        },
+        {
+          "question": "This organization hunts demons in 'Demon Slayer'",
+          "answer": "What is the Demon Slayer Corps?",
+          "value": 600,
+          "category": "anime"
+        },
+        {
+          "question": "This legendary Pokémon is known as the 'Time Travel' Pokémon",
+          "answer": "Who is Celebi?",
+          "value": 800,
+          "category": "anime"
+        },
+        {
+          "question": "This anime film became the first non-English-language film to win the Academy Award for Best Animated Feature",
+          "answer": "What is Spirited Away?",
+          "value": 1000,
+          "category": "anime"
+        }
+      ]
+    }
+  }
+} 

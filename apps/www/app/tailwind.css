@@ -5,7 +5,8 @@
 html,
 body {
   @apply bg-white dark:bg-gray-950;
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-family: "Inter", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
@@ -75,4 +76,33 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@layer utilities {
+  .shadow-glow-red {
+    box-shadow: 0 0 15px rgba(255, 65, 54, 0.5);
+  }
+  .shadow-glow-green {
+    box-shadow: 0 0 15px rgba(46, 204, 64, 0.5);
+  }
+  .shadow-glow-blue {
+    box-shadow: 0 0 15px rgba(0, 116, 217, 0.5);
+  }
+  .shadow-glow-purple {
+    box-shadow: 0 0 15px rgba(177, 13, 201, 0.5);
+  }
+  .shadow-glow-orange {
+    box-shadow: 0 0 15px rgba(255, 133, 27, 0.5);
+  }
+  .font-jeopardy {
+    font-family: 'Swiss911', Arial, sans-serif;
+  }
+}
+
+@font-face {
+  font-family: 'Jeopardy';
+  src: url('/fonts/jeopardy.otf') format('otf');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
