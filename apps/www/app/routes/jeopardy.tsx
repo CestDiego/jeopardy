@@ -10,6 +10,7 @@ import { GameSetup } from '~/components/jeopardy/GameSetup';
 import { Scoreboard } from '~/components/jeopardy/Scoreboard';
 import { CurrentPlayer } from '~/components/jeopardy/CurrentPlayer';
 import { BackgroundMusic } from '~/components/jeopardy/BackgroundMusic';
+import { GameOverScreen } from '~/components/jeopardy/GameOverScreen';
 
 const config = jeopardyConfig as unknown as JeopardyConfig;
 
@@ -59,6 +60,14 @@ export default function JeopardyGame() {
 
   const handleQuestionClose = () => {
     setSelectedCell(null);
+  };
+
+  const isGameOver = Array.from(gameState.answeredQuestions.values()).length === 
+    Object.keys(gameState.board.questions).length * 5;
+
+  const handlePlayAgain = () => {
+    setIsSetupPhase(true);
+    startNewGame(categories);
   };
 
   return (
@@ -124,6 +133,14 @@ export default function JeopardyGame() {
               />
             )}
           </div>
+
+          {isGameOver && (
+            <GameOverScreen
+              players={defaultPlayers}
+              scores={gameState.scores}
+              onPlayAgain={handlePlayAgain}
+            />
+          )}
         </>
       )}
     </div>
