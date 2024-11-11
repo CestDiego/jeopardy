@@ -19,6 +19,7 @@ export default function JeopardyGame() {
   const [categories, setCategories] = useState(Object.keys(config.defaultCategories));
   const [isTextToSpeechEnabled, setIsTextToSpeechEnabled] = useState(config.textToSpeech?.enabled ?? false);
   const { speak, isLoading } = useElevenLabsSpeech();
+  const [selectedCell, setSelectedCell] = useState<{ category: string; value: number } | null>(null);
 
   const {
     gameState,
@@ -45,6 +46,7 @@ export default function JeopardyGame() {
   };
 
   const handleQuestionClick = (category: string, value: number) => {
+    setSelectedCell({ category, value });
     selectQuestion(category, value);
     
     if (isTextToSpeechEnabled) {
@@ -53,6 +55,10 @@ export default function JeopardyGame() {
         speak(question.question);
       }
     }
+  };
+
+  const handleQuestionClose = () => {
+    setSelectedCell(null);
   };
 
   return (
@@ -80,6 +86,7 @@ export default function JeopardyGame() {
                 pointValues={config.gameSettings.rounds[gameState.round].pointValues}
                 onQuestionSelect={handleQuestionClick}
                 answeredQuestions={gameState.answeredQuestions}
+                selectedCell={selectedCell}
               />
             </div>
             <div className="w-96">
@@ -92,6 +99,7 @@ export default function JeopardyGame() {
 
             {gameState.selectedQuestion && (
               <QuestionModal
+                layoutId={`${selectedCell?.category}-${selectedCell?.value}`}
                 question={gameState.selectedQuestion.questionData}
                 currentPlayer={defaultPlayers[gameState.currentPlayer]}
                 value={gameState.selectedQuestion.value}
@@ -104,9 +112,15 @@ export default function JeopardyGame() {
                     speak(gameState.selectedQuestion.questionData.question);
                   }
                 }}
-                onSkip={skipQuestion}
+                onSkip={() => {
+                  skipQuestion();
+                  handleQuestionClose();
+                }}
                 onRevealAnswer={revealAnswer}
-                onAnswerResult={handleAnswer}
+                onAnswerResult={(correct) => {
+                  handleAnswer(correct);
+                  handleQuestionClose();
+                }}
               />
             )}
           </div>
