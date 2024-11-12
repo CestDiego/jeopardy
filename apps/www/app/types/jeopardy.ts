@@ -1,4 +1,4 @@
-export type GameRound = 'first' | 'double' | 'final';
+export type GameRound = "first" | "double" | "final";
 
 export interface Player {
   name: string;
@@ -35,15 +35,21 @@ export interface JeopardyConfig {
     players: {
       defaults: Player[];
     };
-    rounds: Record<GameRound, {
-      pointValues: number[];
-    }>;
+    rounds: Record<
+      GameRound,
+      {
+        pointValues: number[];
+      }
+    >;
   };
-  defaultCategories: Record<string, {
-    name: string;
-    questions: Question[];
-  }>;
+  defaultCategories: Record<
+    string,
+    {
+      name: string;
+      questions: Question[];
+    }
+  >;
   textToSpeech?: {
     enabled: boolean;
   };
-} 
+}

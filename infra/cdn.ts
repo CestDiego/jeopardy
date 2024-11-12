@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import * as aws from "@pulumi/aws";
 import * as pulumi from "@pulumi/pulumi";
-import { getOriginShieldRegion } from "../packages/shared/src/origin-shield";
 import { DomainManager } from "../packages/shared/src/DomainManager";
+import { getOriginShieldRegion } from "../packages/shared/src/origin-shield";
 
 const domainManager = DomainManager.fromSst($app);
 

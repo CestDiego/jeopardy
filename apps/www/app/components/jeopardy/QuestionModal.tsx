@@ -1,5 +1,5 @@
-import { motion } from 'framer-motion';
-import type { Question, Player } from '~/types/jeopardy';
+import { motion } from "framer-motion";
+import type { Player, Question } from "~/types/jeopardy";
 
 interface QuestionModalProps {
   question: Question;
@@ -28,7 +28,7 @@ export function QuestionModal({
   onSkip,
   onRevealAnswer,
   onAnswerResult,
-  layoutId
+  layoutId,
 }: QuestionModalProps) {
   return (
     <motion.div
@@ -89,4 +89,4 @@ export function QuestionModal({
       </div>
     </motion.div>
   );
-} 
+}

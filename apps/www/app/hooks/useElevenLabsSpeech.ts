@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { getEnv } from '~/lib/env';
+import { useCallback, useState } from "react";
+import { getEnv } from "~/lib/env";
 
 const { AI_URL } = getEnv();
 
@@ -11,17 +11,17 @@ export const useElevenLabsSpeech = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const url = new URL('/text-to-speech', AI_URL);
+      const url = new URL("/text-to-speech", AI_URL);
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ text }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate speech');
+        throw new Error("Failed to generate speech");
       }
 
       const audioBlob = await response.blob();
@@ -29,7 +29,7 @@ export const useElevenLabsSpeech = () => {
       const audio = new Audio(audioUrl);
       await audio.play();
     } catch (err) {
-      setError('Failed to generate or play speech');
+      setError("Failed to generate or play speech");
       console.error(err);
     } finally {
       setIsLoading(false);

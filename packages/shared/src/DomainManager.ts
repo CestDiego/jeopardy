@@ -1,15 +1,5 @@
-import type { App } from "@pulumi/aws/sagemaker";
-
-// Constants for stack names
-export const STACK_NAMES = {
-  CDN: "cdn",
-  API: "api",
-  WEB: "web",
-  AI: "ai",
-  // Add more stack names as needed
-} as const;
-
-type StackName = typeof STACK_NAMES[keyof typeof STACK_NAMES];
+import type { StackName } from "./validators";
+import { STACK_NAMES, StackNameSchema } from "./validators";
 
 interface DomainConfig {
   baseDomain: string;
@@ -24,13 +14,13 @@ interface DomainConfig {
 const defaultConfig: DomainConfig = {
   baseDomain: "rukuma.marcawasi.com",
   subdomainPatterns: {
-    [STACK_NAMES.CDN]: "cdn.{stage}",
-    [STACK_NAMES.API]: "api.{stage}",
-    [STACK_NAMES.AI]: "ai.{stage}",
-    [STACK_NAMES.WEB]: "{stage}",
+    cdn: "cdn.{stage}",
+    api: "api.{stage}",
+    ai: "ai.{stage}",
+    web: "{stage}",
   },
   localPorts: {
-    [STACK_NAMES.WEB]: 5173,
+    web: 5173,
   },
 };
 
@@ -53,31 +43,44 @@ export class DomainManager {
     );
   }
 
-  getDomain(stackName: StackName): string {
-    const baseDomain = this.config.baseDomain;
-    let subdomain = '';
+  getDomain(stack: StackName): string {
+    // fail fast if stack is not valid
+    StackNameSchema.parse(stack);
 
-    if (this.stage === "prod") {
-      // For the production stage, use a clean subdomain like 'cdn.baseDomain'
-      subdomain = stackName;
-    } else if (this.isPersonalStage()) {
-      // For personal stages, handle local development and domain patterns
-      const localPort = this.config.localPorts?.[stackName];
-      if (localPort) {
-        subdomain = `localhost:${localPort}`;
-      } else {
-        subdomain = `${stackName}.${this.stage}.dev`;
-      }
-    } else {
-      // For other stages like 'dev' or 'pr123', use the default pattern
-      subdomain = `${stackName}.${this.stage}`;
+    // For personal stages, use localhost for any stack with localPort configured
+    if (this.isPersonalStage() && this.config.localPorts?.[stack]) {
+      const port = this.config.localPorts[stack];
+      return `localhost:${port}`;
     }
 
-    return `${subdomain}.${baseDomain}`.replace(/^\./, "");
+    // For production WEB, use base domain directly
+    if (this.stage === "prod" && stack === "web") {
+      return this.config.baseDomain;
+    }
+
+    // For non-prod WEB, prefix with stage
+    if (stack === "web") {
+      return `${this.stage}.${this.config.baseDomain}`;
+    }
+
+    // For all other stacks, use standard subdomain pattern
+    const pattern =
+      this.config.subdomainPatterns?.[stack] || `${stack}.{stage}`;
+    const subdomain = pattern.replace(
+      "{stage}",
+      this.isPersonalStage() ? `${this.stage}.dev` : this.stage,
+    );
+
+    // For production, don't include stage in subdomain
+    if (this.stage === "prod") {
+      return `${stack}.${this.config.baseDomain}`;
+    }
+
+    return `${subdomain}.${this.config.baseDomain}`;
   }
 
   getAllDomains(): Record<StackName, string> {
-    return Object.values(STACK_NAMES).reduce(
+    return STACK_NAMES.reduce(
       (acc, stackName) => {
         acc[stackName] = this.getDomain(stackName);
         return acc;

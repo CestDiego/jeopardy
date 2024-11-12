@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import type { Player, Question, AnsweredQuestion } from '~/types/jeopardy';
+import { useState } from "react";
+import type { AnsweredQuestion, Player, Question } from "~/types/jeopardy";
 
 interface GameState {
   board: {
-    categories: { id: string; name: string; }[];
+    categories: { id: string; name: string }[];
     questions: Record<string, Question[]>;
   };
   currentPlayer: number;
@@ -15,7 +15,7 @@ interface GameState {
     questionData: Question;
   } | null;
   isAnswerRevealed: boolean;
-  round: 'first' | 'double' | 'final' | 'end';
+  round: "first" | "double" | "final" | "end";
 }
 
 interface UseJeopardyGameProps {
@@ -24,25 +24,32 @@ interface UseJeopardyGameProps {
   config: any; // Replace with proper config type
 }
 
-export function useJeopardyGame({ defaultPlayers, initialCategories, config }: UseJeopardyGameProps) {
+export function useJeopardyGame({
+  defaultPlayers,
+  initialCategories,
+  config,
+}: UseJeopardyGameProps) {
   const [gameState, setGameState] = useState<GameState>({
     board: {
       categories: [],
       questions: {},
     },
     currentPlayer: 0,
-    scores: Object.fromEntries(defaultPlayers.map(p => [p.name, 0])),
+    scores: Object.fromEntries(defaultPlayers.map((p) => [p.name, 0])),
     answeredQuestions: new Map(),
     selectedQuestion: null,
     isAnswerRevealed: false,
-    round: 'first',
+    round: "first",
   });
 
   const selectQuestion = (category: string, value: number) => {
-    const question = gameState.board.questions[category]?.find(q => q.value === value);
-    if (!question || gameState.answeredQuestions.has(`${category}-${value}`)) return;
+    const question = gameState.board.questions[category]?.find(
+      (q) => q.value === value,
+    );
+    if (!question || gameState.answeredQuestions.has(`${category}-${value}`))
+      return;
 
-    setGameState(prev => ({
+    setGameState((prev) => ({
       ...prev,
       selectedQuestion: {
         category,
@@ -54,7 +61,7 @@ export function useJeopardyGame({ defaultPlayers, initialCategories, config }: U
   };
 
   const revealAnswer = () => {
-    setGameState(prev => ({
+    setGameState((prev) => ({
       ...prev,
       isAnswerRevealed: true,
     }));
@@ -66,11 +73,12 @@ export function useJeopardyGame({ defaultPlayers, initialCategories, config }: U
     const currentPlayerName = defaultPlayers[gameState.currentPlayer].name;
     const pointValue = gameState.selectedQuestion.value;
 
-    setGameState(prev => ({
+    setGameState((prev) => ({
       ...prev,
       scores: {
         ...prev.scores,
-        [currentPlayerName]: prev.scores[currentPlayerName] + (correct ? pointValue : -pointValue),
+        [currentPlayerName]:
+          prev.scores[currentPlayerName] + (correct ? pointValue : -pointValue),
       },
       answeredQuestions: new Map(prev.answeredQuestions).set(
         `${gameState.selectedQuestion!.category}-${gameState.selectedQuestion!.value}`,
@@ -78,7 +86,7 @@ export function useJeopardyGame({ defaultPlayers, initialCategories, config }: U
           playerId: currentPlayerName,
           value: pointValue,
           isCorrect: correct,
-        }
+        },
       ),
       selectedQuestion: null,
       currentPlayer: (prev.currentPlayer + 1) % defaultPlayers.length,
@@ -90,7 +98,7 @@ export function useJeopardyGame({ defaultPlayers, initialCategories, config }: U
 
     const currentPlayerName = defaultPlayers[gameState.currentPlayer].name;
 
-    setGameState(prev => ({
+    setGameState((prev) => ({
       ...prev,
       answeredQuestions: new Map(prev.answeredQuestions).set(
         `${gameState.selectedQuestion!.category}-${gameState.selectedQuestion!.value}`,
@@ -99,7 +107,7 @@ export function useJeopardyGame({ defaultPlayers, initialCategories, config }: U
           value: gameState.selectedQuestion!.value,
           isCorrect: false,
           skipped: true,
-        }
+        },
       ),
       selectedQuestion: null,
       currentPlayer: (prev.currentPlayer + 1) % defaultPlayers.length,
@@ -111,11 +119,11 @@ export function useJeopardyGame({ defaultPlayers, initialCategories, config }: U
     setGameState({
       ...gameState,
       board,
-      scores: Object.fromEntries(defaultPlayers.map(p => [p.name, 0])),
+      scores: Object.fromEntries(defaultPlayers.map((p) => [p.name, 0])),
       answeredQuestions: new Map(),
       selectedQuestion: null,
       isAnswerRevealed: false,
-      round: 'first',
+      round: "first",
     });
   };
 
@@ -130,23 +138,23 @@ export function useJeopardyGame({ defaultPlayers, initialCategories, config }: U
 }
 
 function generateBoard(categories: string[], config: any) {
-  const selectedCategories = categories.map(categoryId => ({
+  const selectedCategories = categories.map((categoryId) => ({
     id: categoryId,
     name: config.defaultCategories[categoryId].name,
   }));
 
   const questions = Object.fromEntries(
-    categories.map(categoryId => [
+    categories.map((categoryId) => [
       categoryId,
       config.defaultCategories[categoryId].questions.map((q: any) => ({
         ...q,
         category: categoryId,
       })),
-    ])
+    ]),
   );
 
   return {
     categories: selectedCategories,
     questions,
   };
-} 
+}

@@ -10,6 +10,8 @@
     "check:tsc": "pnpm run --no-bail --workspace-concurrency 6 -r typecheck",
     "dev": "sst dev",
     "deploy": "sst deploy",
+    "test": "sst shell vitest",
+    "lint": "npx biome check --write --no-errors-on-unmatched --files-ignore-unknown=true . && git update-index --again",
     "sso": "aws sso login --sso-session=onde-vamos"
   },
   "keywords": [],
@@ -27,7 +29,9 @@
     "chalk": "^5.3.0",
     "chokidar": "^4.0.1",
     "graphql": "^16.8.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vite-tsconfig-paths": "^5.0.1",
+    "vitest": "^2.1.4"
   },
   "packageManager": "pnpm@9.7.1+sha512.faf344af2d6ca65c4c5c8c2224ea77a81a5e8859cbc4e06b1511ddce2f0151512431dd19e6aff31f2c6a8f5f2aced9bd2273e1fed7dd4de1868984059d2c4247"
 }

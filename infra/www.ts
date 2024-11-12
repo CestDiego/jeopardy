@@ -1,7 +1,7 @@
+import { DomainManager } from "../packages/shared/src/DomainManager";
+import { ai } from "./ai";
 import { api } from "./api";
 import { uploadsBucket } from "./cdn";
-import { ai } from "./ai";
-import { DomainManager } from "../packages/shared/src/DomainManager";
 
 const domainManager = DomainManager.fromSst($app);
 

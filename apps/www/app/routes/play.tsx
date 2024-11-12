@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -9,10 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Volume2, VolumeX } from "lucide-react";
-import { questions, type Depth } from "@/lib/questions";
+import { Switch } from "@/components/ui/switch";
 import { useElevenLabsSpeech } from "@/hooks/useElevenLabsSpeech";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { type Depth, questions } from "@/lib/questions";
+import { Volume2, VolumeX } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
 
 const BackgroundVideo = React.memo(({ isPlaying }: { isPlaying: boolean }) => {
   const videoRef = useRef<HTMLVideoElement>(null);

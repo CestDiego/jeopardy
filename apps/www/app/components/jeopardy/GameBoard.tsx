@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import type { Category, Question, AnsweredQuestion } from '~/types/jeopardy';
+import { AnimatePresence, motion } from "framer-motion";
+import React, { useRef } from "react";
+import type { AnsweredQuestion, Category, Question } from "~/types/jeopardy";
 
 interface GameBoardProps {
   categories: Category[];
@@ -11,13 +11,13 @@ interface GameBoardProps {
   selectedCell: { category: string; value: number } | null;
 }
 
-export function GameBoard({ 
-  categories, 
-  questions, 
-  pointValues, 
-  onQuestionSelect, 
+export function GameBoard({
+  categories,
+  questions,
+  pointValues,
+  onQuestionSelect,
   answeredQuestions,
-  selectedCell 
+  selectedCell,
 }: GameBoardProps) {
   const cellRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
@@ -25,8 +25,8 @@ export function GameBoard({
     <div className="grid grid-cols-6 gap-4 relative">
       {/* Render category headers */}
       {categories.map((category) => (
-        <div 
-          key={category.id} 
+        <div
+          key={category.id}
           className="text-center p-4 bg-blue-900 text-white font-bold rounded"
         >
           {category.name}
@@ -38,29 +38,33 @@ export function GameBoard({
         <React.Fragment key={value}>
           {categories.map((category) => {
             const isAnswered = answeredQuestions.has(`${category.id}-${value}`);
-            const isSelected = selectedCell?.category === category.id && selectedCell?.value === value;
+            const isSelected =
+              selectedCell?.category === category.id &&
+              selectedCell?.value === value;
             const cellKey = `${category.id}-${value}`;
-            
+
             return (
               <motion.button
-                ref={el => el && cellRefs.current.set(cellKey, el)}
+                ref={(el) => el && cellRefs.current.set(cellKey, el)}
                 type="button"
                 key={cellKey}
                 layoutId={cellKey}
                 className={`p-4 text-center text-white font-bold rounded ${
-                  isAnswered ? 'bg-gray-800' : 'bg-blue-700 hover:bg-blue-600'
+                  isAnswered ? "bg-gray-800" : "bg-blue-700 hover:bg-blue-600"
                 }`}
-                onClick={() => !isAnswered && onQuestionSelect(category.id, value)}
+                onClick={() =>
+                  !isAnswered && onQuestionSelect(category.id, value)
+                }
                 disabled={isAnswered}
                 initial={false}
                 animate={{
                   scale: isSelected ? 1.1 : 1,
-                  zIndex: isSelected ? 50 : 1
+                  zIndex: isSelected ? 50 : 1,
                 }}
                 transition={{
                   type: "spring",
                   stiffness: 300,
-                  damping: 30
+                  damping: 30,
                 }}
               >
                 ${value}
@@ -87,7 +91,7 @@ export function GameBoard({
               transition={{
                 type: "spring",
                 stiffness: 300,
-                damping: 30
+                damping: 30,
               }}
             >
               {/* Question content will be rendered by QuestionModal */}
@@ -97,4 +101,4 @@ export function GameBoard({
       </AnimatePresence>
     </div>
   );
-} 
+}

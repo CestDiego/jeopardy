@@ -1,7 +1,7 @@
-import { builder } from '../builder';
+import { builder } from "../builder";
 
 // Define the BatchParameters input type
-const BatchParametersInput = builder.inputType('BatchParametersInput', {
+const BatchParametersInput = builder.inputType("BatchParametersInput", {
   fields: (t) => ({
     model: t.string(),
     temperature: t.float(),
@@ -10,24 +10,24 @@ const BatchParametersInput = builder.inputType('BatchParametersInput', {
 });
 
 // Define the Batch type
-const BatchType = builder.objectType('Batch', {
+const BatchType = builder.objectType("Batch", {
   fields: (t) => ({
-    id: t.exposeID('id'),
-    status: t.exposeString('status'),
-    results: t.exposeString('results', { nullable: true }),
-    error: t.exposeString('error', { nullable: true }),
+    id: t.exposeID("id"),
+    status: t.exposeString("status"),
+    results: t.exposeString("results", { nullable: true }),
+    error: t.exposeString("error", { nullable: true }),
   }),
 });
 
 // Define the CreateBatchPayload type
-const CreateBatchPayload = builder.objectType('CreateBatchPayload', {
+const CreateBatchPayload = builder.objectType("CreateBatchPayload", {
   fields: (t) => ({
-    batchId: t.exposeID('batchId'),
+    batchId: t.exposeID("batchId"),
   }),
 });
 
 // Add the createBatch mutation
-builder.mutationField('createBatch', (t) =>
+builder.mutationField("createBatch", (t) =>
   t.field({
     type: CreateBatchPayload,
     args: {
@@ -41,7 +41,7 @@ builder.mutationField('createBatch', (t) =>
       // 1. Validating the input
       // 2. Storing the batch information in your database
       // 3. Potentially triggering the batch processing
-      
+
       // For now, we'll just return a mock batch ID
       const batchId = `batch_${Date.now()}`;
 
@@ -50,11 +50,11 @@ builder.mutationField('createBatch', (t) =>
         batchId: batchId,
       };
     },
-  })
+  }),
 );
 
 // Add the batch query
-builder.queryField('batch', (t) =>
+builder.queryField("batch", (t) =>
   t.field({
     type: BatchType,
     args: {
@@ -67,10 +67,10 @@ builder.queryField('batch', (t) =>
       // For now, we'll just return mock data
       return {
         id: args.id,
-        status: 'processing',
+        status: "processing",
         results: null,
         error: null,
       };
     },
-  })
+  }),
 );

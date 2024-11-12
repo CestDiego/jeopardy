@@ -95,13 +95,13 @@ body {
     box-shadow: 0 0 15px rgba(255, 133, 27, 0.5);
   }
   .font-jeopardy {
-    font-family: 'Swiss911', Arial, sans-serif;
+    font-family: "Swiss911", Arial, sans-serif;
   }
 }
 
 @font-face {
-  font-family: 'Jeopardy';
-  src: url('/fonts/jeopardy.otf') format('otf');
+  font-family: "Jeopardy";
+  src: url("/fonts/jeopardy.otf") format("otf");
   font-weight: normal;
   font-style: normal;
   font-display: swap;

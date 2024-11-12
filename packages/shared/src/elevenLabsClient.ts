@@ -1,4 +1,4 @@
-import { ElevenLabsClient } from 'elevenlabs';
+import { ElevenLabsClient } from "elevenlabs";
 
 let elevenlabs: ElevenLabsClient | null = null;
 
@@ -12,10 +12,14 @@ export const getElevenLabsClient = (apiKey: string) => {
   return elevenlabs;
 };
 
-export const textToSpeech = async (text: string, apiKey: string, voiceId: string) => {
+export const textToSpeech = async (
+  text: string,
+  apiKey: string,
+  voiceId: string,
+) => {
   const client = getElevenLabsClient(apiKey);
   if (!client) {
-    throw new Error('ElevenLabs client is not initialized');
+    throw new Error("ElevenLabs client is not initialized");
   }
 
   try {

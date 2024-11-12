@@ -1,15 +1,18 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 interface BackgroundMusicProps {
   isPlaying: boolean;
   volume?: number;
 }
 
-export const BackgroundMusic = ({ isPlaying, volume = 0.3 }: BackgroundMusicProps) => {
+export const BackgroundMusic = ({
+  isPlaying,
+  volume = 0.3,
+}: BackgroundMusicProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio('/assets/sounds/jeopardy-theme.mp3');
+    audioRef.current = new Audio("/assets/sounds/jeopardy-theme.mp3");
     audioRef.current.loop = true;
     audioRef.current.volume = volume;
 
@@ -33,4 +36,4 @@ export const BackgroundMusic = ({ isPlaying, volume = 0.3 }: BackgroundMusicProp
   }, [isPlaying]);
 
   return null;
-}; 
+};

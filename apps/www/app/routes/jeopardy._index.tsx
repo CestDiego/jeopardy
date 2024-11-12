@@ -1,26 +1,33 @@
-import { useState } from 'react';
 import { useElevenLabsSpeech } from "@/hooks/useElevenLabsSpeech";
-import type { JeopardyConfig } from '~/types/jeopardy';
-import jeopardyConfig from '~/config/jeopardy-config.json';
-import { useJeopardyGame } from '~/hooks/useJeopardyGame';
-import { useGameAudio } from '~/hooks/useGameAudio';
-import { GameBoard } from '~/components/jeopardy/GameBoard';
-import { QuestionModal } from '~/components/jeopardy/QuestionModal';
-import { GameSetup } from '~/components/jeopardy/GameSetup';
-import { Scoreboard } from '~/components/jeopardy/Scoreboard';
-import { CurrentPlayer } from '~/components/jeopardy/CurrentPlayer';
-import { BackgroundMusic } from '~/components/jeopardy/BackgroundMusic';
-import { GameOverScreen } from '~/components/jeopardy/GameOverScreen';
+import { useState } from "react";
+import { BackgroundMusic } from "~/components/jeopardy/BackgroundMusic";
+import { CurrentPlayer } from "~/components/jeopardy/CurrentPlayer";
+import { GameBoard } from "~/components/jeopardy/GameBoard";
+import { GameOverScreen } from "~/components/jeopardy/GameOverScreen";
+import { GameSetup } from "~/components/jeopardy/GameSetup";
+import { QuestionModal } from "~/components/jeopardy/QuestionModal";
+import { Scoreboard } from "~/components/jeopardy/Scoreboard";
+import jeopardyConfig from "~/config/jeopardy-config.json";
+import { useGameAudio } from "~/hooks/useGameAudio";
+import { useJeopardyGame } from "~/hooks/useJeopardyGame";
+import type { JeopardyConfig } from "~/types/jeopardy";
 
 const config = jeopardyConfig as unknown as JeopardyConfig;
 
 export default function JeopardyGame() {
   const defaultPlayers = config.gameSettings.players.defaults;
   const [isSetupPhase, setIsSetupPhase] = useState(true);
-  const [categories, setCategories] = useState(Object.keys(config.defaultCategories));
-  const [isTextToSpeechEnabled, setIsTextToSpeechEnabled] = useState(config.textToSpeech?.enabled ?? false);
+  const [categories, setCategories] = useState(
+    Object.keys(config.defaultCategories),
+  );
+  const [isTextToSpeechEnabled, setIsTextToSpeechEnabled] = useState(
+    config.textToSpeech?.enabled ?? false,
+  );
   const { speak, isLoading } = useElevenLabsSpeech();
-  const [selectedCell, setSelectedCell] = useState<{ category: string; value: number } | null>(null);
+  const [selectedCell, setSelectedCell] = useState<{
+    category: string;
+    value: number;
+  } | null>(null);
 
   const {
     gameState,
@@ -49,9 +56,11 @@ export default function JeopardyGame() {
   const handleQuestionClick = (category: string, value: number) => {
     setSelectedCell({ category, value });
     selectQuestion(category, value);
-    
+
     if (isTextToSpeechEnabled) {
-      const question = gameState.board.questions[category]?.find(q => q.value === value);
+      const question = gameState.board.questions[category]?.find(
+        (q) => q.value === value,
+      );
       if (question) {
         speak(question.question);
       }
@@ -62,7 +71,8 @@ export default function JeopardyGame() {
     setSelectedCell(null);
   };
 
-  const isGameOver = Array.from(gameState.answeredQuestions.values()).length === 
+  const isGameOver =
+    Array.from(gameState.answeredQuestions.values()).length ===
     Object.keys(gameState.board.questions).length * 5;
 
   const handlePlayAgain = () => {
@@ -84,7 +94,9 @@ export default function JeopardyGame() {
         <>
           <CurrentPlayer
             player={defaultPlayers[gameState.currentPlayer]}
-            score={gameState.scores[defaultPlayers[gameState.currentPlayer].name]}
+            score={
+              gameState.scores[defaultPlayers[gameState.currentPlayer].name]
+            }
           />
 
           <div className="flex gap-8 max-w-[1600px] mx-auto mt-20">
@@ -92,7 +104,9 @@ export default function JeopardyGame() {
               <GameBoard
                 categories={gameState.board.categories}
                 questions={gameState.board.questions}
-                pointValues={config.gameSettings.rounds[gameState.round].pointValues}
+                pointValues={
+                  config.gameSettings.rounds[gameState.round].pointValues
+                }
                 onQuestionSelect={handleQuestionClick}
                 answeredQuestions={gameState.answeredQuestions}
                 selectedCell={selectedCell}

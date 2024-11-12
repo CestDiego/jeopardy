@@ -1,12 +1,17 @@
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
 import type { LinksFunction, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import styles from "./tailwind.css?url";
+import {
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+} from "@remix-run/react";
 import { getEnv } from "./lib/env";
+import styles from "./tailwind.css?url";
 
-export const links: LinksFunction = () => [
-  { rel: "stylesheet", href: styles },
-];
+export const links: LinksFunction = () => [{ rel: "stylesheet", href: styles }];
 
 export const loader: LoaderFunction = async () => {
   return json({

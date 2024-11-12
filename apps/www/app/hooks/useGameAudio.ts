@@ -1,11 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 
 interface UseGameAudioProps {
   isSetupPhase: boolean;
   hasSelectedQuestion: boolean;
 }
 
-export function useGameAudio({ isSetupPhase, hasSelectedQuestion }: UseGameAudioProps) {
+export function useGameAudio({
+  isSetupPhase,
+  hasSelectedQuestion,
+}: UseGameAudioProps) {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
   useEffect(() => {
@@ -24,4 +27,4 @@ export function useGameAudio({ isSetupPhase, hasSelectedQuestion }: UseGameAudio
   }, [hasSelectedQuestion, isSetupPhase]);
 
   return { isMusicPlaying };
-} 
+}

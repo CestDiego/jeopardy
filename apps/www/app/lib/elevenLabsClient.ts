@@ -1,13 +1,15 @@
-import { ElevenLabsClient } from 'elevenlabs';
-import { getEnv } from './env';
+import { ElevenLabsClient } from "elevenlabs";
+import { getEnv } from "./env";
 
 let elevenlabs: ElevenLabsClient | null = null;
 
 export const getElevenLabsClient = () => {
   const env = getEnv();
-  
+
   if (!env.ELEVEN_LABS_API_KEY) {
-    console.error('ELEVEN_LABS_API_KEY is not set in the environment variables');
+    console.error(
+      "ELEVEN_LABS_API_KEY is not set in the environment variables",
+    );
     return null;
   }
 
@@ -23,7 +25,7 @@ export const getElevenLabsClient = () => {
 export const textToSpeech = async (text: string) => {
   const client = getElevenLabsClient();
   if (!client) {
-    throw new Error('ElevenLabs client is not initialized');
+    throw new Error("ElevenLabs client is not initialized");
   }
 
   try {
