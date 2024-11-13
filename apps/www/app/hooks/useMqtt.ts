@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import mqtt from 'mqtt';
 import { Config } from '../config';
+import type { JeopardyAction } from '~/types/jeopardy';
 
 interface WebSocketMessage {
-  action: string;
+  action: JeopardyAction;
   data: any;
 }
 
@@ -13,7 +14,7 @@ export function useMqtt(roomCode: string, handleMessage?: (message: WebSocketMes
   const [isConnected, setIsConnected] = useState(false);
   const connectionRef = useRef<mqtt.MqttClient | null>(null);
 
-  const publish = async (action: string, data: any) => {
+  const publish = async (action: JeopardyAction, data: any) => {
     if (!connectionRef.current) {
       console.error('MQTT connection not established');
       return;

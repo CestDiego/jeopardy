@@ -12,7 +12,7 @@ export const Scoreboard = ({
   currentPlayerIndex,
 }: ScoreboardProps) => {
   const sortedPlayers = [...players].sort(
-    (a, b) => scores[b.name] - scores[a.name],
+    (a, b) => scores[b.playerInfo.name] - scores[a.playerInfo.name],
   );
 
   return (
@@ -26,30 +26,36 @@ export const Scoreboard = ({
       <div className="space-y-3">
         {sortedPlayers.map((player) => (
           <div
-            key={player.id}
+            key={player.playerInfo.name}
             className={`flex justify-between items-center p-3 rounded-md
                       transition-all duration-300
                       ${
                         currentPlayerIndex ===
-                        players.findIndex((p) => p.id === player.id)
+                        players.findIndex(
+                          (p) => p.playerInfo.name === player.playerInfo.name,
+                        )
                           ? "bg-yellow-500 scale-105 shadow-lg"
                           : "bg-opacity-20"
                       }`}
             style={{
               backgroundColor:
-                player.color +
+                player.playerInfo.color +
                 (currentPlayerIndex ===
-                players.findIndex((p) => p.id === player.id)
-                  ? ""
-                  : "20"),
+                  players.findIndex(
+                    (p) => p.playerInfo.name === player.playerInfo.name,
+                  )
+                    ? ""
+                    : "20"),
             }}
           >
-            <span className="text-white font-bold text-lg">{player.name}</span>
+            <span className="text-white font-bold text-lg">
+              {player.playerInfo.name}
+            </span>
             <span
               className={`text-white font-bold text-xl
-                            ${scores[player.name] < 0 ? "text-red-400" : "text-green-400"}`}
+                            ${scores[player.playerInfo.name] < 0 ? "text-red-400" : "text-green-400"}`}
             >
-              ${scores[player.name]}
+              ${scores[player.playerInfo.name]}
             </span>
           </div>
         ))}

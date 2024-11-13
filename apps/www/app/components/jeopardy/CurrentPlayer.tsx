@@ -16,9 +16,11 @@ export const CurrentPlayer = ({ player, score }: CurrentPlayerProps) => {
         <div className="flex items-center gap-4">
           <div
             className="w-4 h-4 rounded-full animate-pulse"
-            style={{ backgroundColor: player.color }}
+            style={{ backgroundColor: player.playerInfo.color }}
           />
-          <span className="text-2xl font-bold text-white">{player.name}</span>
+          <span className="text-2xl font-bold text-white">
+            {player.playerInfo.name}
+          </span>
         </div>
         <span
           className={`text-2xl font-bold ${score < 0 ? "text-red-400" : "text-green-400"}`}

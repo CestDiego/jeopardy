@@ -1,9 +1,15 @@
 export type GameRound = "first" | "double" | "final";
 
-export interface Player {
-  name: string;
-  color: string;
+export type Player = {
+  name?: string;
+  color?: string;
+  playerInfo: {
+    name: string;   
+    color: string;
+  };
 }
+
+export type JeopardyAction = "identify" | "buzz" | "playerLeft";
 
 export interface Question {
   question: string;

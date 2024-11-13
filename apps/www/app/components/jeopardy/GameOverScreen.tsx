@@ -32,7 +32,7 @@ export function GameOverScreen({
 
   // Sort players by score in descending order
   const sortedPlayers = [...players].sort(
-    (a, b) => scores[b.name] - scores[a.name],
+    (a, b) => scores[b.playerInfo.name] - scores[a.playerInfo.name],
   );
   const winner = sortedPlayers[0];
 
@@ -56,27 +56,29 @@ export function GameOverScreen({
           >
             {winner.name} Wins!
           </h2>
-          <p className="text-3xl text-white">with ${scores[winner.name]}</p>
+          <p className="text-3xl text-white">
+            with ${scores[winner.playerInfo.name]}
+          </p>
         </div>
 
         <div className="space-y-4 mb-12">
           {sortedPlayers.map((player, index) => (
             <div
-              key={player.name}
+              key={player.playerInfo.name}
               className="flex items-center justify-between w-96 mx-auto p-4 rounded"
-              style={{ backgroundColor: `${player.color}33` }}
+              style={{ backgroundColor: `${player.playerInfo.color}33` }}
             >
               <div className="flex items-center gap-4">
                 <span className="text-2xl text-white">{index + 1}.</span>
                 <span
                   className="text-2xl font-bold"
-                  style={{ color: player.color }}
+                  style={{ color: player.playerInfo.color }}
                 >
-                  {player.name}
+                  {player.playerInfo.name}
                 </span>
               </div>
               <span className="text-2xl text-white">
-                ${scores[player.name]}
+                ${scores[player.playerInfo.name]}
               </span>
             </div>
           ))}

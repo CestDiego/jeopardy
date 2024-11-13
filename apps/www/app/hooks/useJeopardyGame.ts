@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { AnsweredQuestion, Player, Question } from "~/types/jeopardy";
+import type { AnsweredQuestion, JeopardyConfig, Player, Question } from "~/types/jeopardy";
 
 interface GameState {
   board: {
@@ -19,13 +19,13 @@ interface GameState {
 }
 
 interface UseJeopardyGameProps {
-  defaultPlayers: Player[];
+  players: Player[];
   initialCategories: string[];
-  config: any; // Replace with proper config type
+  config: JeopardyConfig;
 }
 
 export function useJeopardyGame({
-  defaultPlayers,
+  players,
   initialCategories,
   config,
 }: UseJeopardyGameProps) {
@@ -35,7 +35,7 @@ export function useJeopardyGame({
       questions: {},
     },
     currentPlayer: 0,
-    scores: Object.fromEntries(defaultPlayers.map((p) => [p.name, 0])),
+    scores: Object.fromEntries(players.map((p) => [p.playerInfo.name, 0])),
     answeredQuestions: new Map(),
     selectedQuestion: null,
     isAnswerRevealed: false,
@@ -70,7 +70,8 @@ export function useJeopardyGame({
   const handleAnswer = (correct: boolean) => {
     if (!gameState.selectedQuestion) return;
 
-    const currentPlayerName = defaultPlayers[gameState.currentPlayer].name;
+    const currentPlayerName =
+      players[gameState.currentPlayer].playerInfo.name;
     const pointValue = gameState.selectedQuestion.value;
 
     setGameState((prev) => ({
@@ -89,14 +90,14 @@ export function useJeopardyGame({
         },
       ),
       selectedQuestion: null,
-      currentPlayer: (prev.currentPlayer + 1) % defaultPlayers.length,
+      currentPlayer: (prev.currentPlayer + 1) % players.length,
     }));
   };
 
   const skipQuestion = () => {
     if (!gameState.selectedQuestion) return;
 
-    const currentPlayerName = defaultPlayers[gameState.currentPlayer].name;
+    const currentPlayerName = players[gameState.currentPlayer].playerInfo.name;
 
     setGameState((prev) => ({
       ...prev,
@@ -110,7 +111,7 @@ export function useJeopardyGame({
         },
       ),
       selectedQuestion: null,
-      currentPlayer: (prev.currentPlayer + 1) % defaultPlayers.length,
+      currentPlayer: (prev.currentPlayer + 1) % players.length,
     }));
   };
 
@@ -119,7 +120,7 @@ export function useJeopardyGame({
     setGameState({
       ...gameState,
       board,
-      scores: Object.fromEntries(defaultPlayers.map((p) => [p.name, 0])),
+      scores: Object.fromEntries(players.map((p) => [p.playerInfo.name, 0])),
       answeredQuestions: new Map(),
       selectedQuestion: null,
       isAnswerRevealed: false,

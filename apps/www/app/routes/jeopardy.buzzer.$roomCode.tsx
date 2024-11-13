@@ -100,8 +100,12 @@ export default function JeopardyBuzzer() {
       ) : (
         <button
           className="w-64 h-64 bg-red-500 rounded-full text-4xl font-bold shadow-xl hover:bg-red-600 transition-colors transform hover:scale-105 active:scale-95 border-4 border-red-400"
+          type="button"
           onClick={() => {
-            // Handle buzzer press
+            publish("buzz", {
+              player: name,
+              time: Date.now(),
+            });
           }}
         >
           BUZZ!

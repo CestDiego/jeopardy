@@ -1,12 +1,16 @@
 import { Button } from "@/components/ui/button";
+import type { Player } from "~/types/jeopardy";
+import { play } from "elevenlabs";
 
 interface GameSetupProps {
   savedGames: never[];
+  players: Player[];
   onStartGame: (categories: string[]) => void;
   defaultCategories: string[];
 }
 
 export const GameSetup = ({
+  players,
   onStartGame,
   defaultCategories,
 }: GameSetupProps) => {
@@ -34,51 +38,22 @@ export const GameSetup = ({
 
         {/* Player List */}
         <div className="grid grid-cols-5 gap-6 mb-12">
-          <div className="bg-[#0508B0] p-6 rounded-lg border-4 border-black shadow-lg transform hover:scale-105 transition-all duration-200">
-            <div className="w-6 h-6 rounded-full bg-[#FF4136] mx-auto mb-3 shadow-glow-red" />
-            <p
-              className="text-white font-bold text-xl"
-              style={{ fontFamily: "Swiss911, Arial, sans-serif" }}
+          {players.map((player) => (
+            <div
+              key={player.playerInfo.name}
+              className="bg-[#0508B0] p-6 rounded-lg border-4 border-black shadow-lg transform hover:scale-105 transition-all duration-200"
             >
-              Dumi
-            </p>
-          </div>
-          <div className="bg-[#0508B0] p-6 rounded-lg border-4 border-black shadow-lg transform hover:scale-105 transition-all duration-200">
-            <div className="w-6 h-6 rounded-full bg-[#2ECC40] mx-auto mb-3 shadow-glow-green" />
-            <p
-              className="text-white font-bold text-xl"
-              style={{ fontFamily: "Swiss911, Arial, sans-serif" }}
-            >
-              Naledi
-            </p>
-          </div>
-          <div className="bg-[#0508B0] p-6 rounded-lg border-4 border-black shadow-lg transform hover:scale-105 transition-all duration-200">
-            <div className="w-6 h-6 rounded-full bg-[#0074D9] mx-auto mb-3 shadow-glow-blue" />
-            <p
-              className="text-white font-bold text-xl"
-              style={{ fontFamily: "Swiss911, Arial, sans-serif" }}
-            >
-              CJ
-            </p>
-          </div>
-          <div className="bg-[#0508B0] p-6 rounded-lg border-4 border-black shadow-lg transform hover:scale-105 transition-all duration-200">
-            <div className="w-6 h-6 rounded-full bg-[#B10DC9] mx-auto mb-3 shadow-glow-purple" />
-            <p
-              className="text-white font-bold text-xl"
-              style={{ fontFamily: "Swiss911, Arial, sans-serif" }}
-            >
-              Deliwe
-            </p>
-          </div>
-          <div className="bg-[#0508B0] p-6 rounded-lg border-4 border-black shadow-lg transform hover:scale-105 transition-all duration-200">
-            <div className="w-6 h-6 rounded-full bg-[#FF851B] mx-auto mb-3 shadow-glow-orange" />
-            <p
-              className="text-white font-bold text-xl"
-              style={{ fontFamily: "Swiss911, Arial, sans-serif" }}
-            >
-              Diego
-            </p>
-          </div>
+              <div
+                className={`w-6 h-6 rounded-full bg-[${player.playerInfo.color}] mx-auto mb-3`}
+              />
+              <p
+                className="text-white font-bold text-xl"
+                style={{ fontFamily: "Swiss911, Arial, sans-serif" }}
+              >
+                {player.playerInfo.name}
+              </p>
+            </div>
+          ))}
         </div>
 
         {/* Start Button */}
