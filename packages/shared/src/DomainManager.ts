@@ -18,6 +18,7 @@ const defaultConfig: DomainConfig = {
     api: "api.{stage}",
     ai: "ai.{stage}",
     web: "{stage}",
+    ws: "ws.{stage}",
   },
   localPorts: {
     web: 5173,

@@ -1,28 +1,79 @@
-import { json, type LoaderFunction } from "@remix-run/node";
+import { json, type LoaderFunction, redirect } from "@remix-run/node";
 import { useLoaderData, useLocation, useNavigate } from "@remix-run/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { useMqtt } from "~/hooks/useMqtt";
 
 export const loader: LoaderFunction = ({ request }) => {
+  const url = new URL(request.url);
+  const existingRoom = url.searchParams.get('room');
+  
+  if (existingRoom) {
+    return json({ roomCode: existingRoom, baseUrl: url.origin });
+  }
+  
   const roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-  return json({ roomCode, baseUrl: new URL(request.url).origin });
+  // Redirect to the same page with the room code in the URL
+  return redirect(`${url.pathname}?room=${roomCode}`);
 };
 
 export default function JeopardyJoin() {
   const { roomCode, baseUrl } = useLoaderData<typeof loader>();
   const [players, setPlayers] = useState<
-    Array<{ name: string; color: string }>
+    Array<{ playerInfo: { name: string; color: string } }>
   >([]);
+  const { isConnected, publish } = useMqtt(roomCode, (message) => {
+    console.log("handleMessage", message);
+    switch (message.action) {
+      case "identify":
+        if (message.data.type === "player") {
+          console.log("player joined", message.data);
+          setPlayers((current) => [...current, message.data]);
+        }
+        if (message.data.type === "host") {
+          console.log("host connected");
+        }
+        break;
+      case "playerLeft":
+        if (message.data.type === "player") {
+          setPlayers((current) =>
+            current.filter((p) => p.playerInfo.name !== message.data.name),
+          );
+        }
+        break;
+      default:
+        console.error("unknown action", message);
+    }
+  });
   const navigate = useNavigate();
+  const location = useLocation();
   
-  // Create the buzzer URL using useHref to handle the base URL properly
+  const isJoining = location.search.includes('room=');
   const buzzerUrl = `${baseUrl}/jeopardy/buzzer/${roomCode}`;
+  const inviteUrl = `${baseUrl}/jeopardy/join?room=${roomCode}`;
+
+  useEffect(() => {
+    publish('identify', { type: 'host', roomCode });
+  }, [publish, roomCode]);
+
+  const handleRemovePlayer = (playerName: string) => {
+    publish('removePlayer', { name: playerName });
+    setPlayers((current) =>
+      current.filter((p) => p.playerInfo.name !== playerName)
+    );
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-blue-900 text-white p-4">
       <h1 className="text-4xl font-bold mb-8">Jeopardy Game Setup</h1>
 
       <div className="text-center mb-8">
+        <div className="mb-2">
+          <span className={`inline-block w-3 h-3 rounded-full ${
+            isConnected ? 'bg-green-500' : 'bg-red-500'
+          } mr-2`} />
+          {isConnected ? 'Connected' : 'Connecting...'}
+        </div>
         <p className="text-xl mb-4">Scan to join as a player:</p>
         <div className="bg-white p-4 rounded-lg">
           <QRCodeSVG value={buzzerUrl} size={256} />
@@ -35,13 +86,20 @@ export default function JeopardyJoin() {
           <p className="text-gray-300">Waiting for players to join...</p>
         ) : (
           <ul className="space-y-2">
-            {players.map((player, index) => (
+            {players.map((player) => (
               <li
-                key={index}
-                className="flex items-center p-2 rounded"
-                style={{ backgroundColor: player.color }}
+                key={player.playerInfo.name}
+                className="flex items-center justify-between p-2 rounded"
+                style={{ backgroundColor: player.playerInfo.color }}
               >
-                {player.name}
+                <span>{player.playerInfo.name}</span>
+                <button
+                  onClick={() => handleRemovePlayer(player.playerInfo.name)}
+                  className="ml-2 px-2 py-1 bg-red-500 rounded hover:bg-red-600 text-white"
+                  type="button"
+                >
+                  Remove
+                </button>
               </li>
             ))}
           </ul>

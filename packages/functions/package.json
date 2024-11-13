@@ -26,6 +26,7 @@
     "@types/node": "^22.7.5"
   },
   "dependencies": {
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.687.0",
     "@aws-sdk/client-s3": "^3.670.0",
     "@hono/zod-validator": "^0.4.1",
     "@lucia-auth/adapter-drizzle": "^1.1.0",
