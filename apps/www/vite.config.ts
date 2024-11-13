@@ -17,6 +17,7 @@ export default defineConfig({
   ],
 
   server: {
+    host: true,
     fs: {
       // Restrict files that could be served by Vite's dev server.  Accessing
       // files outside this directory list that aren't imported from an allowed
