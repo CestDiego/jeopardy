@@ -18,9 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@pulumi/aws": "^6.55.0",
-    "@pulumi/pulumi": "^3.136.1",
-    "sst": "3.1.67"
+    "sst": "3.3.23"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",

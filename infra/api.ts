@@ -1,5 +1,4 @@
 import { uploadsBucket } from "./cdn";
-import { DATABASE_CONNECTIONS } from "./database";
 
 // export const auth = new sst.aws.Function("Auth", {
 //   handler: "packages/functions/src/auth.handler",
@@ -7,7 +6,7 @@ import { DATABASE_CONNECTIONS } from "./database";
 // });
 
 export const api = new sst.aws.Function("Api", {
-  link: [uploadsBucket, DATABASE_CONNECTIONS],
+  link: [uploadsBucket],
   handler: "packages/functions/src/graphql/graphql.handler",
   url: true,
 });

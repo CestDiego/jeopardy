@@ -1,7 +1,5 @@
 /// <reference path="./.sst/platform/config.d.ts" />
-
 import * as fs from "node:fs";
-
 export default $config({
   app(input) {
     return {
@@ -17,7 +15,7 @@ export default $config({
               ? "onde-vamos-production"
               : "onde-vamos-dev",
         },
-        command: "1.0.1",
+        neon: "0.6.3",
       },
     };
   },
@@ -26,7 +24,6 @@ export default $config({
       args.runtime = "nodejs20.x";
       args.architecture = "arm64";
     });
-
     new sst.x.DevCommand("GraphQL", {
       dev: {
         command: "pnpm run generate:watch",
@@ -34,7 +31,6 @@ export default $config({
         autostart: true,
       },
     });
-
     const outputs = {};
     for (const value of fs.readdirSync("./infra/")) {
       const result = await import(`./infra/${value}`);
