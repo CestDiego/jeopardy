@@ -5,7 +5,6 @@ import type { AnsweredQuestion, Category, Question } from "~/types/jeopardy";
 interface GameBoardProps {
   categories: Category[];
   questions: Record<string, Question[]>;
-  pointValues: number[];
   onQuestionSelect: (category: string, value: number) => void;
   answeredQuestions: Map<string, AnsweredQuestion>;
   selectedCell: { category: string; value: number } | null;
@@ -14,7 +13,6 @@ interface GameBoardProps {
 export function GameBoard({
   categories,
   questions,
-  pointValues,
   onQuestionSelect,
   answeredQuestions,
   selectedCell,

@@ -1,12 +1,9 @@
 import { motion } from "framer-motion";
-import type { Player, Question } from "~/types/jeopardy";
+import type { Player, GameState } from "~/types/jeopardy";
 
 interface QuestionModalProps {
-  question: Question;
-  currentPlayer: Player;
-  value: number;
-  isAnswerRevealed: boolean;
-  showAnswerButtons: boolean;
+  gameState: GameState;
+  players: Player[];
   isLoading: boolean;
   isTextToSpeechEnabled: boolean;
   onRepeatQuestion: () => void;
@@ -17,11 +14,8 @@ interface QuestionModalProps {
 }
 
 export function QuestionModal({
-  question,
-  currentPlayer,
-  value,
-  isAnswerRevealed,
-  showAnswerButtons,
+  gameState,
+  players,
   isLoading,
   isTextToSpeechEnabled,
   onRepeatQuestion,
@@ -30,6 +24,11 @@ export function QuestionModal({
   onAnswerResult,
   layoutId,
 }: QuestionModalProps) {
+  const currentPlayer = gameState.selectedQuestion ? players[gameState.currentPlayer] : null;
+  const question = gameState.selectedQuestion?.questionData;
+
+  if (!question) return null;
+
   return (
     <motion.div
       layoutId={layoutId}
@@ -39,53 +38,75 @@ export function QuestionModal({
       exit={{ opacity: 0 }}
     >
       <div className="w-full max-w-4xl mx-4 text-center">
-        <div className="text-4xl text-white mb-16 font-bold">
+        <div className="text-4xl text-white mb-8 font-bold">
           {question.question}
         </div>
 
-        {isAnswerRevealed && (
+        {gameState.phase === "reading" && (
+          <div className="text-2xl text-yellow-300 mb-8">
+            Reading question...
+          </div>
+        )}
+
+        {gameState.isAnswerRevealed && (
           <div className="text-3xl text-white mb-16 font-bold">
             {question.answer}
           </div>
         )}
 
-        <div className="flex justify-center gap-8">
-          {!isAnswerRevealed ? (
-            <>
-              <button
-                type="button"
-                onClick={onRevealAnswer}
-                className="bg-green-500 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-600 transition-colors"
-              >
-                Reveal Answer
-              </button>
-              <button
-                type="button"
-                onClick={onSkip}
-                className="bg-red-500 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-red-600 transition-colors"
-              >
-                Skip
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={() => onAnswerResult(true)}
-                className="bg-green-500 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-600 transition-colors"
-              >
-                Correct
-              </button>
-              <button
-                type="button"
-                onClick={() => onAnswerResult(false)}
-                className="bg-red-500 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-red-600 transition-colors"
-              >
-                Incorrect
-              </button>
-            </>
-          )}
-        </div>
+        {gameState.phase === "buzzing" && (
+          <div className="text-2xl text-green-300 mb-8 animate-pulse">
+            Buzz now!!!!!
+          </div>
+        )}
+
+        {gameState.phase === "answering" && currentPlayer && (
+          <>
+            <div className="text-2xl mb-8">
+              <span className="text-white">Answering: </span>
+              <span style={{ color: currentPlayer.playerInfo.color }}>
+                {currentPlayer.playerInfo.name}
+              </span>
+            </div>
+            <div className="flex justify-center gap-8">
+              {!gameState.isAnswerRevealed ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={onRevealAnswer}
+                    className="bg-green-500 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-600 transition-colors"
+                  >
+                    Reveal Answer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onSkip}
+                    className="bg-red-500 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-red-600 transition-colors"
+                  >
+                    Skip
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onAnswerResult(true)}
+                    className="bg-green-500 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-green-600 transition-colors"
+                  >
+                    Correct
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onAnswerResult(false)}
+                    className="bg-red-500 text-white px-8 py-3 rounded-lg text-xl font-bold hover:bg-red-600 transition-colors"
+                  >
+                    Incorrect
+                  </button>
+                </>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </motion.div>
   );

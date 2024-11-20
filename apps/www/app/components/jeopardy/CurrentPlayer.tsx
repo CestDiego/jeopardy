@@ -1,11 +1,13 @@
 import type { Player } from "~/types/jeopardy";
 
 interface CurrentPlayerProps {
-  player: Player;
+  player: Player | undefined;
   score: number;
 }
 
 export const CurrentPlayer = ({ player, score }: CurrentPlayerProps) => {
+  if (!player) return null;
+
   return (
     <div
       className="fixed top-4 left-1/2 -translate-x-1/2 bg-[#060CE9] px-8 py-4 rounded-lg 

@@ -1,6 +1,6 @@
-import { ApiError } from "@rukuma/core/errors";
-import { logger } from "@rukuma/core/logger";
-import { textToSpeech } from "@rukuma/shared/elevenLabsClient";
+import { ApiError } from "@jeopardy/core/errors";
+import { logger } from "@jeopardy/core/logger";
+import { textToSpeech } from "@jeopardy/shared/elevenLabsClient";
 import { Hono } from "hono";
 import { handle, streamHandle } from "hono/aws-lambda";
 import { logger as honoLogger } from "hono/logger";

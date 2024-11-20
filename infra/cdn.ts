@@ -6,7 +6,7 @@ import { getOriginShieldRegion } from "../packages/shared/src/origin-shield";
 
 const domainManager = DomainManager.fromSst($app);
 
-const DOMAIN_NAME = "rukuma.marcawasi.com";
+const DOMAIN_NAME = "jeopardy.marcawasi.com";
 
 export const uploadsBucket = new sst.aws.Bucket("Uploads", {
   access: "cloudfront",

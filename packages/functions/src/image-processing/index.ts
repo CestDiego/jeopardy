@@ -6,8 +6,8 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
-import { logger } from "@rukuma/shared/logger";
-import { retry } from "@rukuma/shared/utils";
+import { logger } from "@jeopardy/shared/logger";
+import { retry } from "@jeopardy/shared/utils";
 import type { APIGatewayProxyEventV2 } from "aws-lambda";
 import Sharp, { type FormatEnum } from "sharp";
 import { Watermark } from "./watermark";

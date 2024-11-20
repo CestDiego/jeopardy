@@ -1,4 +1,4 @@
-# rukuma
+# jeopardy
 
 ## Testing Ideas using Serverless Stacks
 

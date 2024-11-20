@@ -3,7 +3,7 @@ import { DomainManager } from "./DomainManager";
 import { STACK_NAMES, type StackName } from "./validators";
 
 describe("DomainManager", () => {
-  const baseDomain = "rukuma.marcawasi.com";
+  const baseDomain = "jeopardy.marcawasi.com";
 
   describe("getDomain", () => {
     // Production environment tests

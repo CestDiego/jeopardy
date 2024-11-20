@@ -1,5 +1,5 @@
 {
-  "name": "@rukuma/www",
+  "name": "@jeopardy/www",
   "private": true,
   "sideEffects": false,
   "type": "module",

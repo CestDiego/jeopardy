@@ -1,5 +1,5 @@
 // index.ts
-import { isPRStage } from "@rukuma/shared/utils";
+import { isPRStage } from "@jeopardy/shared/utils";
 import { deleteBranchByName, getOrCreateBranch } from "./utils";
 
 export async function runScript(functionToExecute: string) {

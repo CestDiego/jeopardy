@@ -206,10 +206,10 @@ importers:
       '@pothos/core':
         specifier: ^4.3.0
         version: 4.3.0(graphql@16.9.0)
-      '@rukuma/core':
+      '@jeopardy/core':
         specifier: 'workspace:'
         version: link:../core
-      '@rukuma/shared':
+      '@jeopardy/shared':
         specifier: 'workspace:'
         version: link:../shared
       arctic:

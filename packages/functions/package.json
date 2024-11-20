@@ -1,5 +1,5 @@
 {
-  "name": "@rukuma/functions",
+  "name": "@jeopardy/functions",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -31,8 +31,8 @@
     "@hono/zod-validator": "^0.4.1",
     "@lucia-auth/adapter-drizzle": "^1.1.0",
     "@pothos/core": "^4.3.0",
-    "@rukuma/core": "workspace:",
-    "@rukuma/shared": "workspace:",
+    "@jeopardy/core": "workspace:",
+    "@jeopardy/shared": "workspace:",
     "arctic": "^1.9.2",
     "graphql-yoga": "^5.7.0",
     "hono": "^4.6.4",

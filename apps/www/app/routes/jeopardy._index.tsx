@@ -1,5 +1,5 @@
 import { useElevenLabsSpeech } from "@/hooks/useElevenLabsSpeech";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BackgroundMusic } from "~/components/jeopardy/BackgroundMusic";
 import { CurrentPlayer } from "~/components/jeopardy/CurrentPlayer";
 import { GameBoard } from "~/components/jeopardy/GameBoard";
@@ -10,7 +10,7 @@ import { Scoreboard } from "~/components/jeopardy/Scoreboard";
 import jeopardyConfig from "~/config/jeopardy-config.json";
 import { useGameAudio } from "~/hooks/useGameAudio";
 import { useJeopardyGame } from "~/hooks/useJeopardyGame";
-import type { JeopardyConfig, Player } from "~/types/jeopardy";
+import type { GamePhase, GameState, JeopardyConfig, Player } from "~/types/jeopardy";
 import { QRCodeSVG } from "qrcode.react";
 import { useMqtt } from "~/hooks/useMqtt";
 import { json, redirect } from "@remix-run/node";
@@ -39,76 +39,112 @@ const Lobby = ({
   isConnected,
   startGame,
   handleRemovePlayer,
+  defaultCategories,
 }: {
-  players: Player[];
+  players: ConnectedPlayer[];
   baseUrl: string;
   roomCode: string;
   isConnected: boolean;
-  startGame: () => void;
+  startGame: (categories: string[]) => void;
   handleRemovePlayer: (playerName: string) => void;
+  defaultCategories: string[];
 }) => {
   const buzzerUrl = `${baseUrl}/jeopardy/buzzer/${roomCode}`;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-blue-900 text-white p-4">
-      <h1 className="text-4xl font-bold mb-8">Jeopardy Game Setup</h1>
+    <div className="min-h-screen bg-[#060CE9] p-8">
+      <div className="grid gap-12">
+        {/* Right side: Game Setup */}
+        <div className="flex flex-col items-center justify-start">
+          <h1
+            className="text-6xl font-bold text-white mb-12 tracking-wider"
+            style={{
+              fontFamily: "Jeopardy, Arial, sans-serif",
+              textShadow:
+                "4px 4px 8px rgba(0,0,0,0.5), 0 0 40px rgba(255,255,255,0.5)",
+            }}
+          >
+            JEOPARDY!
+          </h1>
 
-      <div className="text-center mb-8">
-        <div className="mb-2">
-          <span
-            className={`inline-block w-3 h-3 rounded-full ${
-              isConnected ? "bg-green-500" : "bg-red-500"
-            } mr-2`}
-          />
-          {isConnected ? "Connected" : "Connecting..."}
-        </div>
-        <p className="text-xl mb-4">Scan to join as a player:</p>
-        <div className="bg-white p-4 rounded-lg">
-          <QRCodeSVG value={buzzerUrl} size={256} />
-        </div>
-      </div>
+          <p className="text-xl text-white mb-12 max-w-2xl">
+            Test your knowledge across exciting categories including Hip-Hop
+            History, Yu-Gi-Oh!, Sonic the Hedgehog, Reality TV, and Language
+            Trivia!
+          </p>
 
-      <div className="w-full max-w-md">
-        <h2 className="text-xl mb-4">Connected Players:</h2>
-        {players.length === 0 ? (
-          <p className="text-gray-300">Waiting for players to join...</p>
-        ) : (
-          <ul className="space-y-2">
-            {players.map((player) => (
-              <li
-                key={player.playerInfo.name}
-                className="flex items-center justify-between p-2 rounded"
-                style={{ backgroundColor: player.playerInfo.color }}
-              >
-                <span>{player.playerInfo.name}</span>
-                <button
-                  onClick={() => handleRemovePlayer(player.playerInfo.name)}
-                  className="ml-2 px-2 py-1 bg-red-500 rounded hover:bg-red-600 text-white"
-                  type="button"
+          <div className="text-center mb-8">
+            <div className="mb-2">
+              <span
+                className={`inline-block w-3 h-3 rounded-full ${
+                  isConnected ? "bg-green-500" : "bg-red-500"
+                } mr-2`}
+              />
+              {isConnected ? "Connected" : "Connecting..."}
+            </div>
+            <p className="text-xl mb-4 text-white">Scan to join as a player:</p>
+            <div className="bg-white p-4 rounded-lg">
+              <QRCodeSVG value={buzzerUrl} size={256} />
+            </div>
+          </div>
+
+          <h3 className="text-xl mb-4 text-white">Connected Players:</h3>
+          {players.length === 0 ? (
+            <p className="text-gray-300">Waiting for players to join...</p>
+          ) : (
+            <div className="grid grid-cols-5 gap-6">
+              {players.map((player) => (
+                <div
+                  key={player.playerInfo.name}
+                  className={`bg-[#0508B0] p-4 rounded-lg border-4 ${
+                    player.connectionStatus === 'connected' 
+                      ? 'border-green-400' 
+                      : 'border-red-400'
+                  }`}
                 >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+                  <div className="flex items-center justify-between mb-2">
+                    <div
+                      className="w-4 h-4 rounded-full"
+                      style={{ backgroundColor: player.playerInfo.color }}
+                    />
+                    <div 
+                      className={`w-3 h-3 rounded-full ${
+                        player.connectionStatus === 'connected' 
+                          ? 'bg-green-400' 
+                          : 'bg-red-400'
+                      }`} 
+                    />
+                  </div>
+                  <p className="text-white font-bold text-lg text-center">
+                    {player.playerInfo.name}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+          <button
+            className="bg-yellow-400 hover:bg-yellow-500 text-black text-2xl font-bold py-6 px-12 rounded-lg transform hover:scale-105 transition-all duration-200 shadow-lg border-4 border-black disabled:opacity-50 disabled:transform-none mt-8"
+            style={{ fontFamily: "Swiss911, Arial, sans-serif" }}
+            disabled={players.length < 2}
+            type="button"
+            onClick={() => startGame(defaultCategories)}
+          >
+            START GAME ({players.length}/5 players)
+          </button>
+        </div>
       </div>
-
-      <button
-        className="mt-8 px-6 py-3 bg-green-500 rounded-lg font-bold disabled:opacity-50"
-        disabled={players.length < 2}
-        type="button"
-        onClick={startGame}
-      >
-        Start Game ({players.length}/5 players)
-      </button>
     </div>
   );
 };
 
+interface ConnectedPlayer extends Player {
+  connectionStatus: 'connected' | 'disconnected';
+  lastSeen: number;
+}
+
 export default function JeopardyGame() {
   const { baseUrl, roomCode } = useLoaderData<typeof loader>();
-  const [isSetupPhase, setIsSetupPhase] = useState(true);
+  const [gamePhase, setGamePhase] = useState<GamePhase>('join');
   const [categories, setCategories] = useState(
     Object.keys(config.defaultCategories),
   );
@@ -120,28 +156,8 @@ export default function JeopardyGame() {
     category: string;
     value: number;
   } | null>(null);
-  const [isJoinPhase, setIsJoinPhase] = useState(true);
-  const [players, setPlayers] = useState<Player[]>([]);
-  const { isConnected, publish } = useMqtt(roomCode, (message) => {
-    console.log("handleMessage", message);
-    switch (message.action) {
-      case "identify":
-        if (message.data.type === "player") {
-          setPlayers((current) => [...current, message.data]);
-        }
-        break;
-      case "buzz":
-        console.log("buzz", message.data);
-        break;
-      case "playerLeft":
-        if (message.data.type === "player") {
-          setPlayers((current) =>
-            current.filter((p) => p.playerInfo.name !== message.data.name),
-          );
-        }
-        break;
-    }
-  });
+  const [players, setPlayers] = useState<ConnectedPlayer[]>([]);
+  
   const {
     gameState,
     selectQuestion,
@@ -149,25 +165,78 @@ export default function JeopardyGame() {
     handleAnswer,
     skipQuestion,
     startNewGame,
+    handleBuzz,
   } = useJeopardyGame({
     players,
     initialCategories: categories,
     config,
   });
 
+  const { isConnected, publish } = useMqtt(roomCode, (message) => {
+    switch (message.action) {
+      case "identify":
+        if (message.data.type === "player") {
+          setPlayers(current => {
+            const existingPlayer = current.find(
+              p => p.playerInfo.name === message.data.playerInfo.name
+            );
+            
+            if (existingPlayer) {
+              // Update existing player
+              return current.map(p => 
+                p.playerInfo.name === message.data.playerInfo.name
+                  ? {
+                      ...p,
+                      connectionStatus: 'connected',
+                      lastSeen: Date.now()
+                    }
+                  : p
+              );
+            }
+            
+            // Add new player
+            return [...current, {
+              ...message.data,
+              connectionStatus: 'connected',
+              lastSeen: Date.now()
+            }];
+          });
+        }
+        break;
+      case "buzz":
+        handleBuzz(message.data.name);
+        break;
+      case "playerLeft":
+        setPlayers(current =>
+          current.map(p =>
+            p.playerInfo.name === message.data.name
+              ? { ...p, connectionStatus: 'disconnected', lastSeen: Date.now() }
+              : p
+          )
+        );
+        break;
+    }
+  });
+
+  useEffect(() => {
+    console.log({ gameState });
+  }, [gameState]);
+
   const { isMusicPlaying } = useGameAudio({
-    isSetupPhase,
+    isSetupPhase: gamePhase === 'join',
     hasSelectedQuestion: !!gameState.selectedQuestion,
   });
 
   const handleStartGame = (customCategories: string[]) => {
     setCategories(customCategories);
-    setIsSetupPhase(false);
-    setIsJoinPhase(false);
+    setGamePhase('selection');
     startNewGame(customCategories);
+    publish('gameStarted', { categories: customCategories });
   };
 
   const handleQuestionClick = (category: string, value: number) => {
+    if (gameState.phase !== 'selection') return;
+    
     setSelectedCell({ category, value });
     selectQuestion(category, value);
 
@@ -190,46 +259,42 @@ export default function JeopardyGame() {
     Object.keys(gameState.board.questions).length * 5;
 
   const handlePlayAgain = () => {
-    setIsSetupPhase(true);
+    setGamePhase('join');
     startNewGame(categories);
+    publish('gameReset', {});
   };
 
-  if (isJoinPhase) {
-    return (
-      <Lobby
-        players={players}
-        baseUrl={baseUrl}
-        roomCode={roomCode}
-        isConnected={isConnected}
-        startGame={() => {
-          setIsJoinPhase(false);
-        }}
-        handleRemovePlayer={(playerName) => {
-          setPlayers((current) =>
-            current.filter((p) => p.playerInfo.name !== playerName),
-          );
-          publish("removePlayer", { name: playerName });
-        }}
-      />
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-black p-4">
-      <BackgroundMusic isPlaying={isMusicPlaying} />
-
-      {isSetupPhase ? (
-        <GameSetup
-          savedGames={[]}
+  // Render different screens based on game phase
+  switch (gamePhase) {
+    case 'join':
+      return (
+        <Lobby
           players={players}
-          onStartGame={handleStartGame}
+          baseUrl={baseUrl}
+          roomCode={roomCode}
+          isConnected={isConnected}
           defaultCategories={categories}
+          startGame={() => {
+            if (players.length >= 2) {
+              setGamePhase('selection');
+            }
+          }}
+          handleRemovePlayer={(playerName) => {
+            setPlayers((current) =>
+              current.filter((p) => p.playerInfo.name !== playerName),
+            );
+            publish("playerLeft", { name: playerName });
+          }}
         />
-      ) : (
-        <>
+      );
+
+    case 'selection':
+      return (
+        <div className="min-h-screen bg-black p-4">
+          <BackgroundMusic isPlaying={isMusicPlaying} />
           <CurrentPlayer
             player={players[gameState.currentPlayer]}
-            score={gameState.scores[players[gameState.currentPlayer].playerInfo.name]}
+            score={gameState.scores[players[gameState.currentPlayer]?.playerInfo?.name] ?? 0}
           />
 
           <div className="flex gap-8 max-w-[1600px] mx-auto mt-20">
@@ -237,9 +302,6 @@ export default function JeopardyGame() {
               <GameBoard
                 categories={gameState.board.categories}
                 questions={gameState.board.questions}
-                pointValues={
-                  config.gameSettings.rounds[gameState.round].pointValues
-                }
                 onQuestionSelect={handleQuestionClick}
                 answeredQuestions={gameState.answeredQuestions}
                 selectedCell={selectedCell}
@@ -256,11 +318,8 @@ export default function JeopardyGame() {
             {gameState.selectedQuestion && (
               <QuestionModal
                 layoutId={`${selectedCell?.category}-${selectedCell?.value}`}
-                question={gameState.selectedQuestion.questionData}
-                currentPlayer={players[gameState.currentPlayer]}
-                value={gameState.selectedQuestion.value}
-                isAnswerRevealed={gameState.isAnswerRevealed}
-                showAnswerButtons={gameState.isAnswerRevealed}
+                players={players}
+                gameState={gameState}
                 isLoading={isLoading}
                 isTextToSpeechEnabled={isTextToSpeechEnabled}
                 onRepeatQuestion={() => {
@@ -271,11 +330,16 @@ export default function JeopardyGame() {
                 onSkip={() => {
                   skipQuestion();
                   handleQuestionClose();
+                  publish('questionSkipped', {});
                 }}
-                onRevealAnswer={revealAnswer}
+                onRevealAnswer={() => {
+                  revealAnswer();
+                  publish('answerRevealed', {});
+                }}
                 onAnswerResult={(correct) => {
                   handleAnswer(correct);
                   handleQuestionClose();
+                  publish('questionAnswered', { correct });
                 }}
               />
             )}
@@ -288,8 +352,7 @@ export default function JeopardyGame() {
               onPlayAgain={handlePlayAgain}
             />
           )}
-        </>
-      )}
-    </div>
-  );
+        </div>
+      );
+  }
 }

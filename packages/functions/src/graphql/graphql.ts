@@ -52,5 +52,5 @@ function GraphQLHandler<UserContext extends {}>(
 
 export const handler = GraphQLHandler({
   schema,
-  graphiql: { title: "Rukuma API" },
+  graphiql: { title: "jeopardy API" },
 });

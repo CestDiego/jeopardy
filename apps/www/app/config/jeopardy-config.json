@@ -1,41 +1,4 @@
 {
-  "gameSettings": {
-    "players": {
-      "defaults": [
-        {
-          "name": "Dumi",
-          "color": "#FF4136"
-        },
-        {
-          "name": "Naledi",
-          "color": "#2ECC40"
-        },
-        {
-          "name": "CJ",
-          "color": "#0074D9"
-        },
-        {
-          "name": "Deliwe",
-          "color": "#B10DC9"
-        },
-        {
-          "name": "Diego",
-          "color": "#FF851B"
-        }
-      ]
-    },
-    "rounds": {
-      "first": {
-        "pointValues": [200, 400, 600, 800, 1000]
-      },
-      "double": {
-        "pointValues": [400, 800, 1200, 1600, 2000]
-      },
-      "final": {
-        "pointValues": [2000]
-      }
-    }
-  },
   "defaultCategories": {
     "money": {
       "name": "Mo' Money Mo' Drama",

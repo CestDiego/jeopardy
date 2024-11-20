@@ -5,7 +5,7 @@ import * as fs from "node:fs";
 export default $config({
   app(input) {
     return {
-      name: "rukuma",
+      name: "jeopardy",
       removal: input?.stage === "production" ? "retain" : "remove",
       home: "aws",
       providers: {

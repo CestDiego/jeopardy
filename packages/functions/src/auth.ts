@@ -1,4 +1,4 @@
-import { lucia as auth, google_auth } from "@rukuma/core/clients/lucia";
+import { lucia as auth, google_auth } from "@jeopardy/core/clients/lucia";
 import {
   OAuth2RequestError,
   generateCodeVerifier,

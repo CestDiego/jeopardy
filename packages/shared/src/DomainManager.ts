@@ -12,7 +12,7 @@ interface DomainConfig {
 }
 
 const defaultConfig: DomainConfig = {
-  baseDomain: "rukuma.marcawasi.com",
+  baseDomain: "jeopardy.marcawasi.com",
   subdomainPatterns: {
     cdn: "cdn.{stage}",
     api: "api.{stage}",

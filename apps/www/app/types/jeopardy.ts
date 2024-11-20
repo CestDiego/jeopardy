@@ -4,12 +4,26 @@ export type Player = {
   name?: string;
   color?: string;
   playerInfo: {
-    name: string;   
+    name: string;
     color: string;
   };
-}
+};
 
-export type JeopardyAction = "identify" | "buzz" | "playerLeft";
+export type JeopardyAction =
+  | "identify"
+  | "gameStarted"
+  | "gameReset"
+  | "buzz"
+  | "playerLeft"
+  | "questionReady"
+  | "questionSelected"
+  | "questionSkipped"
+  | "questionAnswered"
+  | "answerRevealed"
+  | "buzzOpen"
+  | "buzzClosed"
+  | "buzzAccepted"
+  | "buzzRejected";
 
 export interface Question {
   question: string;
@@ -37,17 +51,6 @@ export interface AnsweredQuestion {
 }
 
 export interface JeopardyConfig {
-  gameSettings: {
-    players: {
-      defaults: Player[];
-    };
-    rounds: Record<
-      GameRound,
-      {
-        pointValues: number[];
-      }
-    >;
-  };
   defaultCategories: Record<
     string,
     {
@@ -59,3 +62,35 @@ export interface JeopardyConfig {
     enabled: boolean;
   };
 }
+
+export type GamePhase =
+  | "setup"
+  | "join"
+  | "selection"
+  | "reading"
+  | "buzzing"
+  | "answering"
+  | "scoring"
+  | "complete";
+
+export type Board = {
+  categories: Category[];
+  questions: Record<string, Question[]>;
+};
+
+export type GameState = {
+  phase: GamePhase;
+  board: Board;
+  currentPlayer: number;
+  scores: Record<string, number>;
+  selectedQuestion: SelectedQuestion | null;
+  answeredQuestions: Map<string, AnsweredQuestion>;
+  buzzOrder: string[];
+  canBuzz: boolean;
+  isAnswerRevealed: boolean;
+  questionReadStartTime: number | null;
+  buzzWindow: {
+    startTime: number | null;
+    duration: number;
+  };
+};

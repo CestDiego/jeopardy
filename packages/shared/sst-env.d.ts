@@ -36,18 +36,9 @@ declare module "sst" {
       "type": "sst.aws.Function"
       "url": string
     }
-    "MyVpc": {
-      "bastion": string
-      "type": "sst.aws.Vpc"
-    }
     "NEON_API_KEY": {
       "type": "sst.sst.Secret"
       "value": string
-    }
-    "Realtime": {
-      "authorizer": string
-      "endpoint": string
-      "type": "sst.aws.Realtime"
     }
     "TransformedImages": {
       "name": string
@@ -56,15 +47,6 @@ declare module "sst" {
     "Uploads": {
       "name": string
       "type": "sst.aws.Bucket"
-    }
-    "Web": {
-      "type": "sst.aws.Remix"
-      "url": string
-    }
-    "WsApi": {
-      "managementEndpoint": string
-      "type": "sst.aws.ApiGatewayWebSocket"
-      "url": string
     }
   }
 }

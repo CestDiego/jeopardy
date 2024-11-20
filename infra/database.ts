@@ -10,7 +10,7 @@ const databaseString = $resolve([allSecrets.NEON_API_KEY.value]).apply(
       config: {
         roleName: "neondb_owner",
         dbName: "neondb",
-        projectName: "Rukuma",
+        projectName: "jeopardy",
       },
       stage: $app.stage,
     });
