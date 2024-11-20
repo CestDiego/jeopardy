@@ -2,6 +2,7 @@ import { DomainManager } from "../packages/shared/src/DomainManager";
 import { ai } from "./ai";
 import { api } from "./api";
 import { vpc } from "./vpc";
+import { cluster, electric } from "./electric-db";
 import { uploadsBucket } from "./cdn";
 
 const domainManager = DomainManager.fromSst($app);
@@ -12,7 +13,7 @@ const realtime = new sst.aws.Realtime("Realtime", {
 
 const web = new sst.aws.Remix("Web", {
   path: "apps/www",
-  link: [uploadsBucket, api, ai, realtime],
+  link: [uploadsBucket, api, ai, realtime, cluster, electric],
   domain: {
     name: domainManager.getDomain("web"),
   },
@@ -31,7 +32,6 @@ const web = new sst.aws.Remix("Web", {
 
 export const outputs = {
   web: web.url,
-  wsApi: wsApi.url,
   realtimeUrl: realtime.endpoint,
   realtimeAuthorizer: realtime.authorizer,
 

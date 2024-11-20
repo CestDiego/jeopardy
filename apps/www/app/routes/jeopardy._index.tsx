@@ -1,4 +1,5 @@
 import { useElevenLabsSpeech } from "@/hooks/useElevenLabsSpeech";
+import { useShape } from '@electric-sql/react'
 import { useEffect, useState } from "react";
 import { BackgroundMusic } from "~/components/jeopardy/BackgroundMusic";
 import { CurrentPlayer } from "~/components/jeopardy/CurrentPlayer";
@@ -16,6 +17,7 @@ import { useMqtt } from "~/hooks/useMqtt";
 import { json, redirect } from "@remix-run/node";
 import type { LoaderFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { Resource } from "sst"; 
 
 const config = jeopardyConfig as unknown as JeopardyConfig;
 
@@ -23,8 +25,14 @@ export const loader: LoaderFunction = ({ request }) => {
   const url = new URL(request.url);
   const existingRoom = url.searchParams.get('room');
   
+  console.log(Resource.Electric.url, "electric url");
+
   if (existingRoom) {
-    return json({ roomCode: existingRoom, baseUrl: url.origin });
+    return json({
+      roomCode: existingRoom,
+      baseUrl: url.origin,
+      electricUrl: Resource.Electric.service,
+    });
   }
   
   const roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -144,6 +152,10 @@ interface ConnectedPlayer extends Player {
 
 export default function JeopardyGame() {
   const { baseUrl, roomCode } = useLoaderData<typeof loader>();
+  // const { isLoading: isLoadingShape, data } = useShape({
+  //   url: `${baseUrl}/jeopardy/game/${roomCode}`,
+  //   table: "items"
+  // })
   const [gamePhase, setGamePhase] = useState<GamePhase>('join');
   const [categories, setCategories] = useState(
     Object.keys(config.defaultCategories),

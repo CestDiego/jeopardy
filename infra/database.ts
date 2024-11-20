@@ -10,7 +10,7 @@ const databaseString = $resolve([allSecrets.NEON_API_KEY.value]).apply(
       config: {
         roleName: "neondb_owner",
         dbName: "neondb",
-        projectName: "jeopardy",
+        projectName: "Jeopardy",
       },
       stage: $app.stage,
     });
@@ -18,6 +18,7 @@ const databaseString = $resolve([allSecrets.NEON_API_KEY.value]).apply(
     return { primary: databaseString, replicas: [] };
   },
 );
+
 export const DATABASE_CONNECTIONS = new sst.Linkable("DATABASE_CONNECTIONS", {
   properties: databaseString,
 });

@@ -19,6 +19,7 @@ const defaultConfig: DomainConfig = {
     ai: "ai.{stage}",
     web: "{stage}",
     ws: "ws.{stage}",
+    electric: "electric.{stage}",
   },
   localPorts: {
     web: 5173,

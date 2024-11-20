@@ -6,8 +6,6 @@ import { getOriginShieldRegion } from "../packages/shared/src/origin-shield";
 
 const domainManager = DomainManager.fromSst($app);
 
-const DOMAIN_NAME = "jeopardy.marcawasi.com";
-
 export const uploadsBucket = new sst.aws.Bucket("Uploads", {
   access: "cloudfront",
 });
@@ -59,7 +57,12 @@ const responseHeadersPolicy = new aws.cloudfront.ResponseHeadersPolicy(
         items: ["*"],
       },
       accessControlAllowOrigins: {
-        items: [DOMAIN_NAME, $app.stage === "dev" ? "*" : `dev.${DOMAIN_NAME}`],
+        items: [
+          domainManager.getDomain("web"),
+          $app.stage === "dev"
+            ? "*"
+            : `dev.${domainManager.getDomain("web")}`,
+        ],
       },
     },
   },
