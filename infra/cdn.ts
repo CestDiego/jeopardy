@@ -5,160 +5,165 @@ import { DomainManager } from "../packages/shared/src/DomainManager";
 import { getOriginShieldRegion } from "../packages/shared/src/origin-shield";
 
 const domainManager = DomainManager.fromSst($app);
+const uploadsBucket = new sst.aws.Bucket("Uploads", {
+  access: "cloudfront",
+});
 
-export const uploadsBucket = new sst.aws.Bucket("Uploads", {
-  access: "cloudfront",
-});
-const transformedImageBucket = new sst.aws.Bucket("TransformedImages", {
-  access: "cloudfront",
-});
-// Define imageResizer Lambda function
-const imageResizer = new sst.aws.Function("ImageResizer", {
-  handler: "packages/functions/src/image-processing/index.handler",
-  url: true,
-  live: false,
-  nodejs: {
-    install: ["sharp"],
-  },
-  memory: "1500 MB",
-  logging: {
-    retention: "1 day",
-  },
-  link: [transformedImageBucket, uploadsBucket],
-  environment: {
-    originalImageBucketName: uploadsBucket.name,
-    transformedImageBucketName: transformedImageBucket.name,
-    transformedImageCacheTTL: "max-age=31622400",
-    maxImageSize: "4700000",
-  },
-});
-//  // CloudFront Function for URL rewrites
-const urlRewriteFunction = new aws.cloudfront.Function(
-  `${$app.name}-${$app.stage}-CDNUrlRewrite`.slice(0, 64),
-  {
-    runtime: "cloudfront-js-2.0",
-    code: pulumi.interpolate`${fs.readFileSync(
-      "packages/functions/src/url-rewrite/index.js",
-      "utf8",
-    )}`,
-  },
-);
-const responseHeadersPolicy = new aws.cloudfront.ResponseHeadersPolicy(
-  `${$app.name}-${$app.stage}-CDNResponseHeadersPolicy`.slice(0, 64),
-  {
-    comment: "CDN Response Headers Policy",
-    corsConfig: {
-      originOverride: false,
-      accessControlAllowCredentials: false,
-      accessControlAllowMethods: {
-        items: ["GET", "HEAD"],
-      },
-      accessControlAllowHeaders: {
-        items: ["*"],
-      },
-      accessControlAllowOrigins: {
-        items: [
-          domainManager.getDomain("web"),
-          $app.stage === "dev"
-            ? "*"
-            : `dev.${domainManager.getDomain("web")}`,
-        ],
-      },
+const getCdn = () => {
+  const transformedImageBucket = new sst.aws.Bucket("TransformedImages", {
+    access: "cloudfront",
+  });
+  // Define imageResizer Lambda function
+  const imageResizer = new sst.aws.Function("ImageResizer", {
+    handler: "packages/functions/src/image-processing/index.handler",
+    url: true,
+    live: false,
+    nodejs: {
+      install: ["sharp"],
     },
-  },
-);
-const cdn = new sst.aws.Cdn("ContentDeliveryNetwork", {
-  domain: {
-    name: domainManager.getDomain("cdn"),
-  },
-  origins: [
+    memory: "1500 MB",
+    logging: {
+      retention: "1 day",
+    },
+    link: [transformedImageBucket, uploadsBucket],
+    environment: {
+      originalImageBucketName: uploadsBucket.name,
+      transformedImageBucketName: transformedImageBucket.name,
+      transformedImageCacheTTL: "max-age=31622400",
+      maxImageSize: "4700000",
+    },
+  });
+  //  // CloudFront Function for URL rewrites
+  const urlRewriteFunction = new aws.cloudfront.Function(
+    `${$app.name}-${$app.stage}-CDNUrlRewrite`.slice(0, 64),
     {
-      originId: "S3Origin",
-      domainName: transformedImageBucket.domain,
-      originShield: {
-        enabled: true,
-        originShieldRegion: getOriginShieldRegion("us-east-1"),
-      },
-      s3OriginConfig: {
-        originAccessIdentity: new aws.cloudfront.OriginAccessIdentity(
-          `${$app.name}-${$app.stage}-origin-access-identity`,
-          {
-            comment: `${$app.name}-${$app.stage}-origin-access-identity`.slice(
-              0,
-              64,
-            ),
-          },
-        ).cloudfrontAccessIdentityPath,
-      },
+      runtime: "cloudfront-js-2.0",
+      code: pulumi.interpolate`${fs.readFileSync(
+        "packages/functions/src/url-rewrite/index.js",
+        "utf8",
+      )}`,
     },
+  );
+  const responseHeadersPolicy = new aws.cloudfront.ResponseHeadersPolicy(
+    `${$app.name}-${$app.stage}-CDNResponseHeadersPolicy`.slice(0, 64),
     {
-      originId: "LambdaOrigin",
-      domainName: imageResizer.url.apply((url) => new URL(url).hostname),
-      originShield: {
-        enabled: true,
-        originShieldRegion: getOriginShieldRegion("us-east-1"),
-      },
-      customOriginConfig: {
-        httpPort: 80,
-        httpsPort: 443,
-        originProtocolPolicy: "https-only",
-        originSslProtocols: ["TLSv1.2"],
-      },
-    },
-  ],
-  originGroups: [
-    {
-      originId: "mainOriginGroup",
-      failoverCriteria: {
-        statusCodes: [500, 502, 503, 504, 404, 403],
-      },
-      members: [{ originId: "S3Origin" }, { originId: "LambdaOrigin" }],
-    },
-  ],
-  defaultCacheBehavior: {
-    targetOriginId: "mainOriginGroup",
-    viewerProtocolPolicy: "redirect-to-https",
-    allowedMethods: ["GET", "HEAD", "OPTIONS"],
-    cachedMethods: ["GET", "HEAD"],
-    cachePolicyId: new aws.cloudfront.CachePolicy(
-      `${$app.name}-${$app.stage}-imageDeliveryCachePolicy`,
-      {
-        defaultTtl: 86400,
-        maxTtl: 31536000,
-        minTtl: 0,
-        parametersInCacheKeyAndForwardedToOrigin: {
-          cookiesConfig: {
-            cookieBehavior: "none",
-          },
-          headersConfig: {
-            headerBehavior: "none",
-          },
-          queryStringsConfig: {
-            queryStringBehavior: "all",
-          },
+      comment: "CDN Response Headers Policy",
+      corsConfig: {
+        originOverride: false,
+        accessControlAllowCredentials: false,
+        accessControlAllowMethods: {
+          items: ["GET", "HEAD"],
+        },
+        accessControlAllowHeaders: {
+          items: ["*"],
+        },
+        accessControlAllowOrigins: {
+          items: [
+            domainManager.getDomain("web"),
+            $app.stage === "dev"
+              ? "*"
+              : `dev.${domainManager.getDomain("web")}`,
+          ],
         },
       },
-    ).id,
-    responseHeadersPolicyId: responseHeadersPolicy.id,
-    compress: true,
-    functionAssociations: [
+    },
+  );
+  return new sst.aws.Cdn("ContentDeliveryNetwork", {
+    domain: {
+      name: domainManager.getDomain("cdn"),
+    },
+    origins: [
       {
-        eventType: "viewer-request",
-        functionArn: urlRewriteFunction.arn,
+        originId: "S3Origin",
+        domainName: transformedImageBucket.domain,
+        originShield: {
+          enabled: true,
+          originShieldRegion: getOriginShieldRegion("us-east-1"),
+        },
+        s3OriginConfig: {
+          originAccessIdentity: new aws.cloudfront.OriginAccessIdentity(
+            `${$app.name}-${$app.stage}-origin-access-identity`,
+            {
+              comment:
+                `${$app.name}-${$app.stage}-origin-access-identity`.slice(
+                  0,
+                  64,
+                ),
+            },
+          ).cloudfrontAccessIdentityPath,
+        },
+      },
+      {
+        originId: "LambdaOrigin",
+        domainName: imageResizer.url.apply((url) => new URL(url).hostname),
+        originShield: {
+          enabled: true,
+          originShieldRegion: getOriginShieldRegion("us-east-1"),
+        },
+        customOriginConfig: {
+          httpPort: 80,
+          httpsPort: 443,
+          originProtocolPolicy: "https-only",
+          originSslProtocols: ["TLSv1.2"],
+        },
       },
     ],
-  },
-  transform: {
-    distribution: {
-      priceClass: "PriceClass_All",
-      restrictions: {
-        geoRestriction: {
-          restrictionType: "none",
+    originGroups: [
+      {
+        originId: "mainOriginGroup",
+        failoverCriteria: {
+          statusCodes: [500, 502, 503, 504, 404, 403],
+        },
+        members: [{ originId: "S3Origin" }, { originId: "LambdaOrigin" }],
+      },
+    ],
+    defaultCacheBehavior: {
+      targetOriginId: "mainOriginGroup",
+      viewerProtocolPolicy: "redirect-to-https",
+      allowedMethods: ["GET", "HEAD", "OPTIONS"],
+      cachedMethods: ["GET", "HEAD"],
+      cachePolicyId: new aws.cloudfront.CachePolicy(
+        `${$app.name}-${$app.stage}-imageDeliveryCachePolicy`,
+        {
+          defaultTtl: 86400,
+          maxTtl: 31536000,
+          minTtl: 0,
+          parametersInCacheKeyAndForwardedToOrigin: {
+            cookiesConfig: {
+              cookieBehavior: "none",
+            },
+            headersConfig: {
+              headerBehavior: "none",
+            },
+            queryStringsConfig: {
+              queryStringBehavior: "all",
+            },
+          },
+        },
+      ).id,
+      responseHeadersPolicyId: responseHeadersPolicy.id,
+      compress: true,
+      functionAssociations: [
+        {
+          eventType: "viewer-request",
+          functionArn: urlRewriteFunction.arn,
+        },
+      ],
+    },
+    transform: {
+      distribution: {
+        priceClass: "PriceClass_All",
+        restrictions: {
+          geoRestriction: {
+            restrictionType: "none",
+          },
         },
       },
     },
-  },
-});
+  });
+};
+
+export const cdn = getCdn();
 
 export const outputs = {
   cdn: cdn.domainUrl || cdn.url,
