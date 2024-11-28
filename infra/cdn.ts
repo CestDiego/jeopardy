@@ -5,7 +5,7 @@ import { DomainManager } from "../packages/shared/src/DomainManager";
 import { getOriginShieldRegion } from "../packages/shared/src/origin-shield";
 
 const domainManager = DomainManager.fromSst($app);
-const uploadsBucket = new sst.aws.Bucket("Uploads", {
+export const uploadsBucket = new sst.aws.Bucket("Uploads", {
   access: "cloudfront",
 });
 
